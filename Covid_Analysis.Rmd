@@ -461,3 +461,11 @@ kable(model_performance_output, format = 'pipe')
 
 
 #### Deployment
+
+### Conclusion\
+In this project we used supervised machine learning to create an application that predicts probability of death from Covid-19 based on age and pre-existing medical conditions. The dataset was obtained from the Mexican government. The data was cleaned and a total of 13 features were included in the models. Twelve features were medical preconditions as binary data. The last feature was age as a categorical data. Four different machine learning models were created: decision tree model, logistic regression model, random forest model and gradient boosting model. The were evaluated based on accuracy from which the rain forest model was the one with the highest accuracy. However, due to the ?? the logistic regresion model was selected for building our application. Our application is displayed on shiny app. It can be used by medical professionals as a guidance in decision making for hospitalization of patients and use of medical resources during the Covid-19 pandemic. It can also be used by people tested positive with Covid-19 as a guide on whether to seek hospitalization. The application is not to replace experpert advice or governmental recommendations.
+There are limitations to be considered for this project. First of all, the dataset was obtained from the Mexican government and it only contains Mexican population. This means that the data does not represent the whole world population diversity in ethnicity. 
+\
+
+
+
