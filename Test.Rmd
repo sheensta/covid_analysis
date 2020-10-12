@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ##### **Abstract**
-abstract goes here 
+abstract goes here.
 
 ##### **Background**
 Covid-19 is a viral infection caused by the novel virus called severe acute respiratory syndrome 2 (SARS-COV-2). Incubation period of Covid-19 is 2-14 days, which is the time a person shows symptoms after being exposed to the virus. The main symptoms are fever, cough, runny nose, headache, fatigue and muscle aches. \n
