@@ -87,9 +87,6 @@ grid.arrange(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13, p14)
 factor_columns <- c('sex','pneumonia', 'pregnancy', 'diabetes', 'copd', 'asthma', 'inmsupr', 'hypertension', 'other_disease', 'cardiovascular', 'obesity', 'renal_chronic', 'tobacco', 'deathyn')
 covid_complete_case[factor_columns] <- lapply(covid_complete_case[factor_columns], factor)
 
-one_graph <- covid_complete_case %>% gather(key = 'covid_complete_case$deathyn', value=value, -factor_columns) %>%
-  ggplot(aes(y=value, x=factor_columns, fill=covid_complete_case$deathyn)) + geom_bar(position='dodge')
-
 # chi squared test for each pair of pre-existing conditions
 conditions <- list(pneumonia, diabetes, copd, asthma, inmsupr, hypertension, other_disease, cardiovascular, obesity, renal_chronic, tobacco)
 conditions_as_strings <- list('pneumonia', 'diabetes', 'copd', 'asthma', 'inmsupr', 'hypertension', 'other_disease', 'cardiovascular', 'obesity', 'renal_chronic', 'tobacco')
@@ -171,7 +168,7 @@ logistic_regression_model_k10 <- train(deathyn ~., data = covid_complete_case_mo
 saveRDS(logistic_regression_model_k10,"regression_model.rds")
 
 # check ROC curve and area under the curve
-p_2 <- predict(logistic_regression_model_k10, newdata = subset(test_data, select=c(1:13)),type='prob')[,2]
+p_2 <- predict(logistic_regression_model_k10, newdata = subset(test_data, select=c(1:14)),type='prob')[,2]
 pr_2 <- prediction(p_2, test_data$deathyn)
 performance_2 <- performance(pr_2, measure = 'tpr', x.measure = 'fpr')
 sensitivity_2 <- performance(pr_2, 'sens', 'spec')
@@ -223,7 +220,7 @@ tree.death.predicted <-predict(tree_model, test_data)
 # confusion matrix
 round(prop.table(confusionMatrix(tree.death.predicted, test_data$deathyn)$table),4)*100
 #save the model
-saveRDS(tree, "decision_tree.rds")
+saveRDS(tree_model, "decision_tree.rds")
 
 
 ###Random Forest Model
@@ -238,4 +235,5 @@ random_forest_model$finalModel$confusion
 saveRDS(rf_model_cv_rose, 'random_forest_model.rds')
 
 ###
-gbm_model <- train(deathyn ~., data = covid_complete_case_modeling)
+gbm_model <- train(deathyn ~., data = covid_complete_case_modeling, method = "gbm", trControl = train_control, verbose = FALSE)
+
