@@ -12,7 +12,7 @@ ui <- fluidPage(
             'Prediction Results',
             sidebarPanel(
                 h3('Please enter patient information:'),
-                numericInput('age', 'Age', value = '', width = 75),
+                numericInput('age', 'Age', value = '', width = 75, min = 0),
                 radioButtons('sex2', 'Sex:', c('Female' = 1, 'Male' = 0)),
                 tags$b('Symptoms or Preconditions:'),
                 checkboxInput('pneumonia1', 'Pneumonia'),
