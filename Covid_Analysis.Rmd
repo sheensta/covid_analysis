@@ -1,6 +1,7 @@
 ---
 title: "Coronavirus Mortality Prediction Using a Classification Prediction Model"
-output: html_document
+author: "Albina Cako, Colin Green, Lucy Zhang, Sean Zhang"
+output: pdf
 ---
 
 ```{r setup, include=FALSE}
@@ -234,12 +235,6 @@ imputed_age <- round(mean_age + 3*sd_age)
 covid_complete_case$age[covid_complete_case$age > imputed_age] = imputed_age
 ```
 
-Here is a final summary of our data before modeling
-
-```{r}
-summary(covid_complete_case)
-```
-
 ### Modeling and Evaluation
 
 #### Feature Selection
@@ -247,14 +242,14 @@ summary(covid_complete_case)
 ##### Train and Test Data
 ```{r Select the data and split into train and test, include=FALSE}
 # select the columns needed for modeling
-covid_complete_case_glm <- covid_complete_case %>% select(2,8:20,24)
+covid_complete_case_modeling <- covid_complete_case %>% select(2,8:20,24)
 # convert the categorical variables to factors
 factor_columns <- c('sex','pneumonia', 'pregnancy', 'diabetes', 'copd', 'asthma', 'inmsupr', 'hypertension', 'other_disease', 'cardiovascular', 'obesity', 'renal_chronic', 'tobacco', 'deathyn')
-covid_complete_case_glm[factor_columns] <- lapply(covid_complete_case[factor_columns], factor)
-sample_size <- round(0.75*nrow(covid_complete_case_glm))
-train_index <- sample(seq_len(nrow(covid_complete_case_glm)), size = sample_size)
-train_data <- covid_complete_case_glm[train_index, ]
-test_data <- covid_complete_case_glm[-train_index, ]
+covid_complete_case_modeling[factor_columns] <- lapply(covid_complete_case[factor_columns], factor)
+sample_size <- round(0.75*nrow(covid_complete_case_modeling))
+train_index <- sample(seq_len(nrow(covid_complete_case_modeling)), size = sample_size)
+train_data <- covid_complete_case_modeling[train_index, ]
+test_data <- covid_complete_case_modeling[-train_index, ]
 ```
 
 
@@ -263,7 +258,7 @@ test_data <- covid_complete_case_glm[-train_index, ]
 ```{r Logisitc Regression Model, echo=FALSE}
 logistic_model <- readRDS('regression_model.rds')
 
-summary(logistic_model)
+logistic_model$finalModel$coefficients
 confusionMatrix(logistic_model)
 ```
 
@@ -272,8 +267,8 @@ confusionMatrix(logistic_model)
 ```{r Decision Tree Model, echo=FALSE}
 decision_tree_model <- readRDS("decision_tree.rds")
 
-summary(decision_tree_model)
-#confusionMatrix(decision_tree_model, covid_complete_case_glm$deathyn)
+decision_tree_model$finalModel$variable.importance
+round(prop.table(confusionMatrix(tree.death.predicted, test_data$deathyn)$table),4)*100
 ```
 
 #### Random Forest Model
@@ -281,6 +276,17 @@ summary(decision_tree_model)
 ```{r Random Forest Model, echo=FALSE}
 random_forest_model <- readRDS("RF_Crossvalidation_k10_rose.rds")
 
-summary(random_forest_model)
+prop.table(random_forest_model$finalModel$confusion[,0:2])
 ```
 
+#### Gradient Boosting
+
+```{r}
+
+```
+
+
+####Model Selection
+
+
+####Deployment
