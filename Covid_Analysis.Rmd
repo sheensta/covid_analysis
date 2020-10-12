@@ -1,7 +1,7 @@
 ---
 title: "Coronavirus Mortality Prediction Using a Classification Prediction Model"
 author: "Albina Cako, Colin Green, Lucy Zhang, Sean Zhang"
-output: pdf
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -61,7 +61,7 @@ covid <- covid %>% filter(covid_res == 1)
 ```
 
 ```{r, echo=FALSE}
-kable(summary(covid))
+
 # need to make this look prettier
 ```
 
@@ -268,7 +268,7 @@ confusionMatrix(logistic_model)
 decision_tree_model <- readRDS("decision_tree.rds")
 
 decision_tree_model$finalModel$variable.importance
-round(prop.table(confusionMatrix(tree.death.predicted, test_data$deathyn)$table),4)*100
+confusionMatrix(tree_model)
 ```
 
 #### Random Forest Model
@@ -283,8 +283,10 @@ prop.table(random_forest_model$finalModel$confusion[,0:2])
 #### Gradient Boosting
 
 ```{r Gradient Boosting Model, echo=FALSE}
+gbm_model <- readRDS("gbm_model.rds")
 
 
+confusionMatrix(gbm_model)
 ```
 
 
