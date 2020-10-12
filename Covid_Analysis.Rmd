@@ -44,15 +44,9 @@ library(grid)
 library(gridExtra)
 library(ggcorrplot)
 library(knitr)
-<<<<<<< HEAD
 library(VIM)
-=======
 library(gbm)
-<<<<<<< HEAD
 library(qwraps2)
-=======
->>>>>>> 2b879039de880d3f1a09c034a683604477917258
->>>>>>> 0d57dc4be11d09b6fdbbb99b6c28fca256cb0799
 ```
 
 ##### **Data Dictionary** \
@@ -73,12 +67,15 @@ kable(datadictionary, format='pipe')
 ```
 
 ##### **Data Exploration**
+
+The first step in our data exploration is to load in the data and then remove any cases that were not covid positive as they will have no affect on our analysis. We will then look at a summary of the data.
+
 ```{r load data and filter out non-positive cases, message=FALSE}
 covid <- read_csv("covid.csv")
 covid <- covid %>% filter(covid_res == 1)
 ```
 
-```{r, echo=FALSE}
+```{r, results = "asis", echo=FALSE}
 data_summary <- list('sex' =
                        list('male' = ~ sum(sex == 2),
                             'female' = ~ sum(sex == 1)),
@@ -99,9 +96,9 @@ data_summary <- list('sex' =
                             'ignored' = ~ sum(pneumonia == 98),
                             'not specified' = ~ sum(pneumonia == 99)),
                      'age' = 
-                       list('mean' = ~ mean(age),
+                       list('mean' = ~ round(mean(age),2),
                             'median' = ~ median(age),
-                            'standard deviation' = ~ sd(age)),
+                            'standard deviation' = ~ round(sd(age),2)),
                      'pregnancy' = 
                        list('yes' = ~ sum(pregnancy == 1),
                             'no' = ~ sum(pregnancy == 2),
@@ -180,7 +177,9 @@ data_summary <- list('sex' =
                             'not applicable' = ~ sum(icu == 97),
                             'ignored' = ~ sum(icu == 98),
                             'not specified' = ~ sum(icu == 99)))
-
+orig_opt <- options()$qwraps2_markup
+options(qwraps2_markup = "markdown")
+summary_table(covid, data_summary)
 ```
 
 In order to explore the data further we will need to see how death is related to certain aspects of the data.
@@ -195,7 +194,8 @@ covid<- covid %>%
 
 We first visualized the missing data.
 
-```{r visualizing missing data, echo = FALSE}
+```{r visualizing missing data, echo = FALSE, message=FALSE}
+theme_set(theme_minimal())
 precondition_cols = c('pneumonia','diabetes','copd','asthma','inmsupr','hypertension','other_disease','cardiovascular','obesity','renal_chronic', 'tobacco')
 
 #imputing NA in precondition columns
@@ -222,7 +222,7 @@ proc_char <- function(df){
 }
 
 #MISSING Visualizations
-aggr_plot = aggr(proc_NA(covid), col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE, labels=names(data), ylab=c("Histogram of missing data","Pattern"))
+aggr_plot = aggr(proc_NA(covid), numbers=TRUE, sortVars=TRUE, labels=names(data), ylab=c("Histogram of missing data","Pattern"))
 ```
 Missing data in the columns were characterized by 97 = not-applicable, 98 = ignored or not specified or 99 = not specified. In the precondition columns, missing data was proportionately low as seen in the visualization above.
 \
@@ -312,7 +312,6 @@ covid[factor_columns] <- lapply(covid[factor_columns], factor)
 
 ```{r precondition graphs, include=FALSE}
 # graph the data after cleaning
-theme_set(theme_minimal())
 p1 <- ggplot(covid_complete_case,aes(x=sex, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('Male','Female')) + ylab("") +  ggtitle("Sex") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
 p2 <- ggplot(covid_complete_case,aes(x=pneumonia, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Pneumonia") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
 p3 <- ggplot(covid_complete_case,aes(x=diabetes, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Diabetes") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
