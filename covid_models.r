@@ -7,6 +7,8 @@ library(caret)
 library(car)
 library(pscl)
 library(ROCR)
+library(randomForest)
+library(caTools)
 
 # load in the csv file
 covid <- read_csv("covid.csv")
@@ -225,7 +227,7 @@ saveRDS(tree_model, "decision_tree.rds")
 
 ###Random Forest Model
 trcontrol_rose <- trainControl(method = 'cv', number = 10, sampling = 'rose')
-random_forest_model <- train(deathyn~., data = covid_withNA, method = 'rf', trControl = trcontrol_rose, na.action = na.omit)
+random_forest_model <- train(deathyn~., data = covid_complete_case_modeling, method = 'rf', trControl = trcontrol_rose, na.action = na.omit)
 
 plot(random_forest_model)
 random_forest_model$finalModel

@@ -12,7 +12,6 @@ knitr::opts_chunk$set(echo = TRUE)
 abstract goes here 
 
 ##### **Background**
-
 Covid-19 is a viral infection caused by the novel virus called severe acute respiratory syndrome 2 (SARS-COV-2). Incubation period of Covid-19 is 2-14 days, which is the time a person shows symptoms after being exposed to the virus. The main symptoms are fever, cough, runny nose, headache fatigue and muscle aches. 
 The virus was first recorded in China in Fall 2019, however, starting in February 2020 it started rapidly spreading across the world. On March 11, 2020, the World Health Organization declared Covid-19 to be a global pandemic. One of the most tragic events of Covid-19 was the first wave of the virus in Italy, which caught the whole worlds’ attention, where around 44,000 deaths and 250,000 infections were recorded in just 3 months, from March to May 2020. Overwhelmed hospitals, shortage of medical supplies, hospital beds, icu units and medical staff, were a great challenge during the first wave of the virus. However, the fear of these factors is rising as the second wave of the pandemic that is currently happening in the world. The virus has caused over 3 million deaths, spread across 188 countries and it is currently in it’s second wave. 
 The governments all over the world have instructed people positive with Covid-19 to quarantine for 14 days if they have mild symptoms or to visit the  nearest hospital if they experience difficulty breathing, cyanosis or chest pain. People are considered at high risk of developing more serious symptoms or death if they have preexisting medical conditions such as, but not limited to, chronic obstructive pulmonary disease (COPD), chronic kidney disease, obesity, smoking, immunocompromised, heart conditions, type two diabetes and cancer. Older age population is also at higher risk, as they are more likely to have a preexisting medical condition and lower immunity. 
@@ -20,11 +19,9 @@ As Covid-19 is still a threat to public health worldwide and the second wave of 
 
 
 ##### **Objective**
-
 The objective of this research is to use supervised learning to create a model that predicts rate of death depending on age and pre-existing medical conditions. This app is to be used by medical professionals to help them make decisions for hospitalization purposes and treatment of Covid-19 patients. Having an app that predicts possible death rate, can help hospitals decide which patients need hospitalization. In addition, the app can also be used by people who test positive with covid-19, to decide whether they need to visit the hospital. Having this app can reduce unnecessary surges to the hospital of people who are at low risk. The app is quick and easy to use and can be used by everyone. CAUTION with using app needed here.
 
 #### **Data Analysis**
-
 The dataset that we are going to use was obtained from the Mexican government. It has over 560,000 anonymous records of patients who attended a hospital from March – July 2020 regarding covid-19. The data was obtained from Kaggle. 
 
 
@@ -54,7 +51,6 @@ library(knitr)
 #datadictionary <- matrix(data, ncol=2, byrow=TRUE) %>% as_tibble() %>% mutate(V1 = str(V1), V2 = str(V2))
 ```
 ##### **Data Exploration**
-
 ```{r load data and filter out non-positive cases, message=FALSE}
 covid <- read_csv("covid.csv")
 covid <- covid %>% filter(covid_res == 1)
@@ -185,7 +181,6 @@ From the preconditions variable, the yes and no columns predict how strong the c
 
 
 #### Correlation of variables
-
 To perform the correlation between our independent variables used the chi-squared test. However, we were unable to use the p-value provided by the test because our sample size is too large. We used Cramér's V test instead, which takes into account the sample size. Higher value is more correlated.
 
 ```{r check for corellation, include = FALSE}
@@ -254,7 +249,6 @@ test_data <- covid_complete_case_modeling[-train_index, ]
 
 
 #### Logistic Regression Model
-
 ```{r Logisitc Regression Model, echo=FALSE}
 logistic_model <- readRDS('regression_model.rds')
 
@@ -263,16 +257,14 @@ confusionMatrix(logistic_model)
 ```
 
 #### Decision Tree Model
-
 ```{r Decision Tree Model, echo=FALSE}
 decision_tree_model <- readRDS("decision_tree.rds")
 
 decision_tree_model$finalModel$variable.importance
-confusionMatrix(tree_model)
+confusionMatrix(decision_tree_model)
 ```
 
 #### Random Forest Model
-
 ```{r Random Forest Model, echo=FALSE}
 random_forest_model <- readRDS("RF_Crossvalidation_k10_rose.rds")
 
@@ -285,12 +277,11 @@ prop.table(random_forest_model$finalModel$confusion[,0:2])
 ```{r Gradient Boosting Model, echo=FALSE}
 gbm_model <- readRDS("gbm_model.rds")
 
-
 confusionMatrix(gbm_model)
 ```
 
 
-####Model Selection
+#### Model Selection
 
 
-####Deployment
+#### Deployment
