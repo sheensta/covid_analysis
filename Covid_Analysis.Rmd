@@ -1,7 +1,7 @@
 ---
 title: "Coronavirus Mortality Prediction Using a Classification Prediction Model"
 author: "Albina Cako, Colin Green, Lucy Zhang, Sean Zhang"
-output: pdf_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -41,6 +41,7 @@ library(gridExtra)
 library(ggcorrplot)
 library(knitr)
 library(gbm)
+library(qwraps2)
 ```
 
 ##### **Data Dictionary**
@@ -66,8 +67,107 @@ covid <- covid %>% filter(covid_res == 1)
 
 ```{r, echo=FALSE}
 data_summary <- list('sex' =
-                       list('male' = ~ count(covid$sex,vars=2),
-                            'female' = ~ count(covid$sex,vars=1)))
+                       list('male' = ~ sum(sex == 2),
+                            'female' = ~ sum(sex == 1)),
+                     'patient_type' =
+                       list('hopsitalized' = ~ sum(patient_type == 1),
+                            'discharged same day' = ~ sum(patient_type == 2),
+                            'not specified' = ~ sum(patient_type == 99)),
+                     'intubed' = 
+                       list('yes' = ~ sum(intubed == 1),
+                            'no' = ~ sum(intubed == 2),
+                            'not applicable' = ~ sum(intubed == 97),
+                            'ignored' = ~ sum(intubed == 98),
+                            'not specified' = ~ sum(intubed == 99)),
+                     'pneumonia' = 
+                       list('yes' = ~ sum(pneumonia == 1),
+                            'no' = ~ sum(pneumonia == 2),
+                            'not applicable' = ~ sum(pneumonia == 97),
+                            'ignored' = ~ sum(pneumonia == 98),
+                            'not specified' = ~ sum(pneumonia == 99)),
+                     'age' = 
+                       list('mean' = ~ mean(age),
+                            'median' = ~ median(age),
+                            'standard deviation' = ~ sd(age)),
+                     'pregnancy' = 
+                       list('yes' = ~ sum(pregnancy == 1),
+                            'no' = ~ sum(pregnancy == 2),
+                            'not applicable' = ~ sum(pregnancy == 97),
+                            'ignored' = ~ sum(pregnancy == 98),
+                            'not specified' = ~ sum(pregnancy == 99)),
+                     'diabetes' = 
+                       list('yes' = ~ sum(diabetes == 1),
+                            'no' = ~ sum(diabetes == 2),
+                            'not applicable' = ~ sum(diabetes == 97),
+                            'ignored' = ~ sum(diabetes == 98),
+                            'not specified' = ~ sum(diabetes == 99)),
+                     'copd' = 
+                       list('yes' = ~ sum(copd == 1),
+                            'no' = ~ sum(copd == 2),
+                            'not applicable' = ~ sum(copd == 97),
+                            'ignored' = ~ sum(copd == 98),
+                            'not specified' = ~ sum(copd == 99)),
+                     'asthma' = 
+                       list('yes' = ~ sum(asthma == 1),
+                            'no' = ~ sum(asthma == 2),
+                            'not applicable' = ~ sum(asthma == 97),
+                            'ignored' = ~ sum(asthma == 98),
+                            'not specified' = ~ sum(asthma == 99)),
+                     'inmsupr' = 
+                       list('yes' = ~ sum(inmsupr == 1),
+                            'no' = ~ sum(inmsupr == 2),
+                            'not applicable' = ~ sum(inmsupr == 97),
+                            'ignored' = ~ sum(inmsupr == 98),
+                            'not specified' = ~ sum(inmsupr == 99)),
+                     'hypertension' = 
+                       list('yes' = ~ sum(hypertension == 1),
+                            'no' = ~ sum(hypertension == 2),
+                            'not applicable' = ~ sum(hypertension == 97),
+                            'ignored' = ~ sum(hypertension == 98),
+                            'not specified' = ~ sum(hypertension == 99)),
+                     'other_disease' = 
+                       list('yes' = ~ sum(other_disease == 1),
+                            'no' = ~ sum(other_disease == 2),
+                            'not applicable' = ~ sum(other_disease == 97),
+                            'ignored' = ~ sum(other_disease == 98),
+                            'not specified' = ~ sum(other_disease == 99)),
+                     'cardiovascular' = 
+                       list('yes' = ~ sum(cardiovascular == 1),
+                            'no' = ~ sum(cardiovascular == 2),
+                            'not applicable' = ~ sum(cardiovascular == 97),
+                            'ignored' = ~ sum(cardiovascular == 98),
+                            'not specified' = ~ sum(cardiovascular == 99)),
+                     'obesity' = 
+                       list('yes' = ~ sum(obesity == 1),
+                            'no' = ~ sum(obesity == 2),
+                            'not applicable' = ~ sum(obesity == 97),
+                            'ignored' = ~ sum(obesity == 98),
+                            'not specified' = ~ sum(obesity == 99)),
+                     'renal_chronic' = 
+                       list('yes' = ~ sum(renal_chronic == 1),
+                            'no' = ~ sum(renal_chronic == 2),
+                            'not applicable' = ~ sum(renal_chronic == 97),
+                            'ignored' = ~ sum(renal_chronic == 98),
+                            'not specified' = ~ sum(renal_chronic == 99)),
+                     'tobacco' = 
+                       list('yes' = ~ sum(tobacco == 1),
+                            'no' = ~ sum(tobacco == 2),
+                            'not applicable' = ~ sum(tobacco == 97),
+                            'ignored' = ~ sum(tobacco == 98),
+                            'not specified' = ~ sum(tobacco == 99)),
+                     'contact_other_covid' = 
+                       list('yes' = ~ sum(contact_other_covid == 1),
+                            'no' = ~ sum(contact_other_covid == 2),
+                            'not applicable' = ~ sum(contact_other_covid == 97),
+                            'ignored' = ~ sum(contact_other_covid == 98),
+                            'not specified' = ~ sum(contact_other_covid == 99)),
+                     'icu' = 
+                       list('yes' = ~ sum(icu == 1),
+                            'no' = ~ sum(icu == 2),
+                            'not applicable' = ~ sum(icu == 97),
+                            'ignored' = ~ sum(icu == 98),
+                            'not specified' = ~ sum(icu == 99)))
+
 ```
 
 In order to explore the data further we will need to see how death is related to certain aspects of the data.
@@ -135,7 +235,7 @@ for (s in covid_subsets){
   set_table[r,8] <- round(sum(s$sex == '2')/length(s$sex)*100,2)
   r <- r + 1
 }
-set_table
+kable(set_table, format = 'pipe')
 ```
 
 ```{r convert column entries, include=FALSE}
@@ -311,16 +411,26 @@ true_positives <- c(84.7,85,98609,84.8)
 false_positives <- c(8.2,8.5,10553,8.3)
 false_negatives <- c(3.1,2.8,8237,3)
 true_negatives <- c(4,3.7,100876,3.9)
+kappa <- c(0.355,0.34,0.119,0.351)
 
 model_performance <- model_performance %>% mutate(tp = true_positives, fps=false_positives, fn=false_negatives,tn=true_negatives)
 
 model_performance <- model_performance %>% mutate(total=(model_performance$tp + model_performance$fp + model_performance$fn + model_performance$tn))
 
-model_performance <- model_performance %>% mutate(accuracy = (model_performance$tp + model_performance$tn)/model_performance$total, sensitivity = model_performance$tp/(model_performance$tp+model_performance$fn), specificity = model_performance$tn/(model_performance$tn + model_performance$fp), precision = model_performance$tp/(model_performance$tp + model_performance$fp))
+model_performance <- model_performance %>% 
+  mutate(accuracy = round((model_performance$tp + model_performance$tn)/model_performance$total,3), 
+         sensitivity = round(model_performance$tp/(model_performance$tp+model_performance$fn),3), 
+         specificity = round(model_performance$tn/(model_performance$tn + model_performance$fp),3), 
+         precision = round(model_performance$tp/(model_performance$tp + model_performance$fp),3),
+         kappa = kappa)
 
-model_performance <- model_performance %>% mutate(balanced_accuracy =(model_performance$sensitivity + model_performance$specificity)/2, f1 = 2*model_performance$tp/(2*model_performance$tp + model_performance$fp + model_performance$fn))
+model_performance <- model_performance %>% 
+  mutate(bal_accuracy = round((model_performance$sensitivity + model_performance$specificity)/2,3),
+         f1 = round(2*model_performance$tp/(2*model_performance$tp + model_performance$fp + model_performance$fn),3))
 
-kable(model_performance, format = 'pipe')
+model_performance_output <- model_performance %>% select(1,7:13)
+
+kable(model_performance_output, format = 'pipe')
 ```
 
 
