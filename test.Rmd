@@ -90,6 +90,7 @@ We first visualized the missing data.
 ```{r visualizing missing data, echo = FALSE}
 precondition_cols = c('pneumonia','diabetes','copd','asthma','inmsupr','hypertension','other_disease','cardiovascular','obesity','renal_chronic', 'tobacco')
 
+
 #imputing NA in precondition columns
 proc_NA <- function(df){
   df[, names(df) %in% precondition_cols][df[, names(df) %in% precondition_cols] == 98] <- NA
@@ -116,12 +117,12 @@ proc_char <- function(df){
 #MISSING Visualizations
 aggr_plot = aggr(proc_NA(covid), col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE, labels=names(data), ylab=c("Histogram of missing data","Pattern"))
 ```
-Missing data in the columns were characterized by 97 = not-applicable, 98 = ignored or not specified or 99 = not specified. In the precondition columns, missing data was proportionately low as seen in the visualization above.
-\
+To clean the data, we converted all 2’s that represent “no”s into zero’s, since we are using a binary system for all preconditions. This excludes age as it is not a binary categorical variable. 
+Missing data in the columns were characterized by 97 = not-applicable, 98 = ignored or not specified or 99 = not specified. We had to understand what these variables meant. 
 We analyzed the data and realized that 97 was used in 3 columns: pregnancy, intubed or icu. Considering that pregnancy only applies to females, we checked whether 97 indicated that the person was male. Our analysis showed that 97 meant male patient. It was changed to zero in our table. 
 We also explored 97 value in intubed and icu columns. We realized that it would be inapplicable to say a patient was intubed or on icu if they were discharged the same day. We did ran an analysis and noticed that 97 was only used for patients who were not hospitalized in both cases. Since patient’s were not hospitalized, that means that they did not need to be intubed or placed in icu, therefore 97 means “no” in these two columns. We substituted the 97 values with 0’s (no) in our tables.
-The rows that contained the values 98 and 99, which mean ignored or not specified were removed from our data. These values were ignored in the icu and intubed columns which were not included in our analysis, as they are not a precondition. We removed any observation where a precondition column had a missing value (value = 98 or 99), under the assumption that data were Missing Completely At Random (MCAR). This still left us with a dataset of 218275 cases. \
-To clean the data, we converted all 2’s that represent “no”s into zero’s, since we are using a binary system for all preconditions. This excludes age as it is not a binary categorical variable. 
+The rows that contained the values 98 and 99, which mean ignored or not specified were removed from our data. These values were ignored in the icu and intubed columns which were not included in our analysis, as they are not a precondition. This still left us with a dataset of 218275 cases. 
+
 
 ```{r view differences between complete and incomplete cases, echo=FALSE}
 
@@ -262,83 +263,3 @@ ggcorrplot(conditions_matrix, type="upper") + scale_fill_gradient2(limit=c(0,0.4
 ```
 
 The above correlogram shows correlations between the categorical predictor variables. A value greater than 0.5 typically represents collinearity; as all values fall below that threshold, we can assume independence. 
-
-#### Takeaways from Data Exploration
-During data exploration we learned that there was a relatively low proportion of missing datapoints within our predictor variables. Additionally, our predictors are independent of each other, and that there appeared to be a visual correlation between our predictors and the target variable. 
-
-#### Data Imputation
-
-
-Data exploration showed that there were patients' of age 0 up to 120. As 120 years old could be an error in imputation or an outlier, to reduce error we used 3 standard deviations to replace the upper age range. Any age above 95 years old was replaced with 95. Age of 0 was left as it is, as there could be patients newborn or under the age of 1 years old. 
-
-```{r, impute age outliers}
-mean_age <- mean(covid_complete_case$age)
-sd_age <- sd(covid_complete_case$age)
-imputed_age <- round(mean_age + 3*sd_age)
-covid_complete_case$age[covid_complete_case$age > imputed_age] = imputed_age
-```
-
-### Modeling and Evaluation
-
-We have understood, cleaned and organized our data. We are not ready to create our prediction model. We have decided to create 4 models, evaluate them and then chose the model with the highest accuracy.  
-#### Feature Selection
-
-The data started with 23 columns. We have added the death column, which was obtained by the date_died column, as explained above. The death column will be used as our target variable. We decided not to include a few features in our models, as they do not meet our independent variable criteria. We excluded the icu, intubed and contact_other columns in our models as they are not a medical precondition. We chose 13 features in total to be used in our analysis, 12 which are the preconditions and 1 which is the patient's sex. We decided to keep sex as a factor in our analysis, as data exploration showed that difference in sex was significant in covid death rates. The 12 precondition features chosen were: pneumonia, pregnancy, diabetes, copd, asthma, inmsupr (immunosupressed), hypertension, other_disease, cardiovascular, obesity, renal_chronic and tobacco. Sex was the other feature chosen and it was used as a separate numerical feature. 
-##### Train and Test Data
-
-The data was split into train and test sets to be used for our model. Train data contained 75 % of our data, while test data contained 25% of our data. 
-
-```{r Select the data and split into train and test, include=FALSE}
-# select the columns needed for modeling
-covid_complete_case_modeling <- covid_complete_case %>% select(2,8:20,24)
-# convert the categorical variables to factors
-factor_columns <- c('sex','pneumonia', 'pregnancy', 'diabetes', 'copd', 'asthma', 'inmsupr', 'hypertension', 'other_disease', 'cardiovascular', 'obesity', 'renal_chronic', 'tobacco', 'deathyn')
-covid_complete_case_modeling[factor_columns] <- lapply(covid_complete_case[factor_columns], factor)
-sample_size <- round(0.75*nrow(covid_complete_case_modeling))
-train_index <- sample(seq_len(nrow(covid_complete_case_modeling)), size = sample_size)
-train_data <- covid_complete_case_modeling[train_index, ]
-test_data <- covid_complete_case_modeling[-train_index, ]
-```
-
-
-#### Logistic Regression Model
-```{r Logisitc Regression Model, echo=FALSE}
-logistic_model <- readRDS('regression_model.rds')
-
-logistic_model$finalModel$coefficients
-confusionMatrix(logistic_model)
-```
-
-#### Decision Tree Model
-
-Decision tree model
-```{r Decision Tree Model, echo=FALSE}
-decision_tree_model <- readRDS("decision_tree.rds")
-
-decision_tree_model$finalModel$variable.importance
-confusionMatrix(decision_tree_model)
-```
-
-#### Random Forest Model
-
-
-```{r Random Forest Model, echo=FALSE}
-random_forest_model <- readRDS("RF_Crossvalidation_k10_rose.rds")
-
-random_forest_model$finalModel$importance
-prop.table(random_forest_model$finalModel$confusion[,0:2])
-```
-
-#### Gradient Boosting
-
-```{r Gradient Boosting Model, echo=FALSE}
-gbm_model <- readRDS("gbm_model.rds")
-
-confusionMatrix(gbm_model)
-```
-
-
-#### Model Selection
-
-
-#### Deployment
