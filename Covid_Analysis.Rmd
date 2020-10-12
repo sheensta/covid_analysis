@@ -19,14 +19,12 @@ The virus was first recorded in China in Fall 2019, however, around February 202
 Governments all over the world have instructed people who tested positive for Covid-19 to quarantine for 14 days if they have mild symptoms or to visit the nearest hospital if they experience difficulty breathing, cyanosis or chest pain. People are considered at high risk of developing more serious symptoms or death if they have pre-existing medical conditions such as, but not limited to, chronic obstructive pulmonary disease (COPD), chronic kidney disease, obesity, smoking, immunocompromised, heart conditions, type two diabetes and cancer. Older age population is also at higher risk, as they are more likely to have a pre-existing medical condition and lower immunity. \
 As Covid-19 is still a threat to public health worldwide and the second wave of the virus is now growing globally, information is needed by medical professionals and people tested positive with Covid-19 when making decisions on whether hospitalization is needed. The use of machine learning is growing in the fight against Covid-19. \
 A death prediction app can assist medical professionals to make decisions on which patients are at high risk and require hospitalization. In addition, the app can also assist people infected with Covid-19 in deciding whether to self-quarantine or go to a hospital. We expect that our application, when used in conjunction with expert medical advice, will help guide resource allocation during the second wave. 
-
-##### **Objective**\
 \
+##### **Objective**\
 The objective of this project is to create a supervised machine learning model that predicts probability of death due to Covid-19 based on age and pre-existing medical conditions. This app could be used by medical professionals to guide resource allocation for the treatment of Covid-19 patients. Having an app that predicts death probability can help hospitals decide which patients need hospitalization. In addition, the app can also be used by people who test positive with covid-19 as a guide to decide whether they should visit the hospital. Having this app can reduce unnecessary surges to the hospital of people who are at low risk. The app is simple to use and would be easily accessible by anyone. \
 Disclaimer: This application should only be used as a guide and is not a replacement for expert advice or government recommendations.
-
-#### **Data Analysis**\
 \
+#### **Data Analysis**\
 The [dataset](https://www.kaggle.com/tanmoyx/covid19-patient-precondition-dataset) was made publicly available from the Mexican government. It has over 560,000 anonymous records of patients who attended a hospital from March – July 2020 regarding Covid-19. Over 200,000 records were confirmed positive for Covid-19. 
 
 
@@ -66,8 +64,7 @@ kable(datadictionary, format='pipe')
 
 ```
 
-##### **Data Exploration**
-
+##### **Data Exploration**\
 The first step in our data exploration is to load in the data and then remove any cases that were not covid positive as they will have no affect on our analysis. We will then look at a summary of the data.
 
 ```{r load data and filter out non-positive cases, message=FALSE}
@@ -188,11 +185,9 @@ In order to explore the data further we will need to see how death is related to
 covid<- covid %>%
   mutate(deathyn = ifelse(date_died == '9999-99-99', '0','1'))
 ```
-
-#### Missing Data\
 \
-
-We first visualized the missing data.
+#### Missing Data\
+First, we visualized the missing data.
 
 ```{r visualizing missing data, echo = FALSE, message=FALSE}
 theme_set(theme_minimal())
@@ -209,17 +204,6 @@ proc_NA <- function(df){
   return(df)
 }
 
-#making character imputation of categorical columns columns, ignoring AGE (column 9)
-proc_char <- function(df){
-  df[, !names(df) %in% c('age', 'survtime', 'sex')][df[, !names(df) %in% c('age', 'survtime', 'sex')] == 1] <- 'Y'
-  df[, !names(df) %in% c('age', 'survtime', 'sex')][df[, !names(df) %in% c('age', 'survtime', 'sex')] == 2] <- 'N'
-  df$sex[df$sex == 1] <- 'F' 
-  df$sex[df$sex == 2] <- 'M'
-  df[, !names(df) %in% c('age', 'survtime')][df[, !names(df) %in% c('age', 'survtime')] == 97] <- 'Not applicable'
-  df[, !names(df) %in% c('age', 'survtime')][df[, !names(df) %in% c('age', 'survtime')] == 98] <- 'Ignored'
-  df[, !names(df) %in% c('age', 'survtime')][df[, !names(df) %in% c('age', 'survtime')] == 99] <- 'Unknown'
-  return(df)
-}
 
 #MISSING Visualizations
 aggr_plot = aggr(proc_NA(covid), numbers=TRUE, sortVars=TRUE, labels=names(data), ylab=c("Histogram of missing data","Pattern"))
@@ -230,7 +214,7 @@ We analyzed the data and realized that 97 was used in 3 columns: pregnancy, intu
 We also explored 97 value in intubed and icu columns. We realized that it would be inapplicable to say a patient was intubed or on icu if they were discharged the same day. We did ran an analysis and noticed that 97 was only used for patients who were not hospitalized in both cases. Since patient’s were not hospitalized, that means that they did not need to be intubed or placed in icu, therefore 97 means “no” in these two columns. We substituted the 97 values with 0’s (no) in our tables.
 The rows that contained the values 98 and 99, which mean ignored or not specified were removed from our data. These values were ignored in the icu and intubed columns which were not included in our analysis, as they are not a precondition. We removed any observation where a precondition column had a missing value (value = 98 or 99), under the assumption that data were Missing Completely At Random (MCAR). This still left us with a dataset of 218275 cases. \
 To clean the data, we converted all 2’s that represent “no”s into zero’s, since we are using a binary system for all preconditions. This excludes age as it is not a binary categorical variable. 
-
+\
 ```{r view differences between complete and incomplete cases, echo=FALSE}
 
 # filter out incomplete cases
@@ -306,35 +290,34 @@ We plotted individual graphs to predict the relationship between our independent
 
 ```{r convert the categorical variables to factors, include=FALSE}
 factor_columns <- c('sex','pneumonia', 'pregnancy', 'diabetes', 'copd', 'asthma', 'inmsupr', 'hypertension', 'other_disease', 'cardiovascular', 'obesity', 'renal_chronic', 'tobacco', 'deathyn')
-covid[factor_columns] <- lapply(covid[factor_columns], factor)
+covid_complete_case[factor_columns] <- lapply(covid_complete_case[factor_columns], factor)
 ```
 
 
 ```{r precondition graphs, include=FALSE}
 # graph the data after cleaning
-p1 <- ggplot(covid_complete_case,aes(x=sex, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('Male','Female')) + ylab("") +  ggtitle("Sex") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p2 <- ggplot(covid_complete_case,aes(x=pneumonia, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Pneumonia") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p3 <- ggplot(covid_complete_case,aes(x=diabetes, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Diabetes") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p4 <- ggplot(covid_complete_case,aes(x=copd, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("COPD") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p5 <- ggplot(covid_complete_case,aes(x=asthma, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Asthma") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p6 <- ggplot(covid_complete_case,aes(x=inmsupr, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Inmunosuppressed") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p7 <- ggplot(covid_complete_case,aes(x=hypertension, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Hypertension") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p8 <- ggplot(covid_complete_case,aes(x=other_disease, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Other Diseases") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p9 <- ggplot(covid_complete_case,aes(x=cardiovascular, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Cardiovascular") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p10 <- ggplot(covid_complete_case,aes(x=obesity, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Obesity") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p11 <- ggplot(covid_complete_case,aes(x=renal_chronic, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Kidney Disease") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p12 <- ggplot(covid_complete_case,aes(x=tobacco, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Tobacco Use") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p1 <- ggplot(covid_complete_case,aes(x=sex, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('Male','Female')) + ylab("") + xlab("") + ggtitle("Sex") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p2 <- ggplot(covid_complete_case,aes(x=pneumonia, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Pneumonia") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p3 <- ggplot(covid_complete_case,aes(x=diabetes, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Diabetes") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p4 <- ggplot(covid_complete_case,aes(x=copd, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("COPD") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p5 <- ggplot(covid_complete_case,aes(x=asthma, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Asthma") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p6 <- ggplot(covid_complete_case,aes(x=inmsupr, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Inmunosuppressed") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p7 <- ggplot(covid_complete_case,aes(x=hypertension, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Hypertension") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p8 <- ggplot(covid_complete_case,aes(x=other_disease, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Other Diseases") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p9 <- ggplot(covid_complete_case,aes(x=cardiovascular, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Cardiovascular") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p10 <- ggplot(covid_complete_case,aes(x=obesity, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Obesity") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p11 <- ggplot(covid_complete_case,aes(x=renal_chronic, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Kidney Disease") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p12 <- ggplot(covid_complete_case,aes(x=tobacco, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Yes')) + ylab("") + xlab("") +  ggtitle("Tobacco Use") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
 ```
-```{r prcondition graph grid, echo=FALSE}
+```{r prcondition graph grid, echo=FALSE, warning=FALSE}
 grid.arrange(p1,p2,p3,p4,p5,p6,p7,p9,p10,p11,p12,p8, ncol=4, nrow=3,
              top = textGrob("Coronovirus Mortality Rates and Preconditions",gp=gpar(fontsize=20)))
 ```
 
 The graphs above show the comparison between our predictor variables and death. The proportion of deaths is represented by the y-axis. For example, in the “Sex” variable graph, we observe that the male sex has a greater proportion of individuals who died from Covid-19 compared to the female sex. 
  The highest proportion of death is seen in patients with pneumonia, kidney disease, and COPD.
-
+ \
 #### Correlation of variables \
-\
 To perform the correlation between our independent variables, we used the Chi-squared test, as a standard correlogram using Pearson's R does not accept categorical variables. However, we were unable to use the original p-value provided by the test as samples higher than a few hundred typically always return p < 0.05. To adjust for our large sample size, we used Cramér's V test instead. A higher Cramér's V value denotes stronger correlation.
 
 ```{r check for corellation, include = FALSE}
@@ -369,15 +352,13 @@ ggcorrplot(conditions_matrix, type="upper") + scale_fill_gradient2(limit=c(0,0.4
 ```
 
 The above correlogram shows correlations between the categorical predictor variables. A value greater than 0.5 typically represents collinearity; as all values fall below that threshold, we can assume independence. 
-
-#### Takeaways from Data Exploration
+\
+#### Takeaways from Data Exploration\
 During data exploration we learned that there was a relatively low proportion of missing datapoints within our predictor variables. Additionally, our predictors are independent of each other, and that there appeared to be a visual correlation between our predictors and the target variable. 
-
-#### Data Imputation
-
-
+\
+#### Data Imputation\
 Data exploration showed that there were patients' of age 0 up to 120. As 120 years old could be an error in imputation or an outlier, to reduce error we used 3 standard deviations to replace the upper age range. Any age above 95 years old was replaced with 95. Age of 0 was left as it is, as there could be patients newborn or under the age of 1 years old. 
-
+\
 ```{r, impute age outliers}
 mean_age <- mean(covid_complete_case$age)
 sd_age <- sd(covid_complete_case$age)
@@ -385,16 +366,15 @@ imputed_age <- round(mean_age + 3*sd_age)
 covid_complete_case$age[covid_complete_case$age > imputed_age] = imputed_age
 ```
 
-### Modeling and Evaluation
+### Modeling and Evaluation\
+We have understood, cleaned and organized our data. We are not ready to create our prediction model. We have decided to create 4 models, evaluate them and then chose the model with the highest accuracy.
+\
+#### Feature Selection\
+The data started with 23 columns. We have added the death column, which was obtained by the date_died column, as explained above. The death column will be used as our target variable. We decided not to include a few features in our models, as they do not meet our independent variable criteria. We excluded the icu, intubed and contact_other columns in our models as they are not a medical precondition. We chose 13 features in total to be used in our analysis, 12 which are the preconditions and 1 which is the patient's sex. We decided to keep sex as a factor in our analysis, as data exploration showed that difference in sex was significant in covid death rates. The 12 precondition features chosen were: pneumonia, pregnancy, diabetes, copd, asthma, inmsupr (immunosupressed), hypertension, other_disease, cardiovascular, obesity, renal_chronic and tobacco. Sex was the other feature chosen and it was used as a separate numerical feature.\
 
-We have understood, cleaned and organized our data. We are not ready to create our prediction model. We have decided to create 4 models, evaluate them and then chose the model with the highest accuracy.  
-#### Feature Selection
-
-The data started with 23 columns. We have added the death column, which was obtained by the date_died column, as explained above. The death column will be used as our target variable. We decided not to include a few features in our models, as they do not meet our independent variable criteria. We excluded the icu, intubed and contact_other columns in our models as they are not a medical precondition. We chose 13 features in total to be used in our analysis, 12 which are the preconditions and 1 which is the patient's sex. We decided to keep sex as a factor in our analysis, as data exploration showed that difference in sex was significant in covid death rates. The 12 precondition features chosen were: pneumonia, pregnancy, diabetes, copd, asthma, inmsupr (immunosupressed), hypertension, other_disease, cardiovascular, obesity, renal_chronic and tobacco. Sex was the other feature chosen and it was used as a separate numerical feature. 
-##### Train and Test Data
-
+##### Train and Test Data\
 The data was split into train and test sets to be used for our model. Train data contained 75 % of our data, while test data contained 25% of our data. 
-
+\
 ```{r Select the data and split into train and test, include=FALSE}
 # select the columns needed for modeling
 covid_complete_case_modeling <- covid_complete_case %>% select(2,8:20,24)
@@ -407,8 +387,7 @@ train_data <- covid_complete_case_modeling[train_index, ]
 test_data <- covid_complete_case_modeling[-train_index, ]
 ```
 
-
-#### Logistic Regression Model
+#### Logistic Regression Model\
 ```{r Logisitc Regression Model, echo=FALSE}
 logistic_model <- readRDS('regression_model.rds')
 
@@ -416,9 +395,7 @@ logistic_model$finalModel$coefficients
 confusionMatrix(logistic_model)
 ```
 
-#### Decision Tree Model
-
-Decision tree model
+#### Decision Tree Model\
 ```{r Decision Tree Model, echo=FALSE}
 decision_tree_model <- readRDS("decision_tree.rds")
 
@@ -426,9 +403,7 @@ decision_tree_model$finalModel$variable.importance
 confusionMatrix(decision_tree_model)
 ```
 
-#### Random Forest Model
-
-
+#### Random Forest Model\
 ```{r Random Forest Model, echo=FALSE}
 random_forest_model <- readRDS("RF_Crossvalidation_k10_rose.rds")
 
@@ -436,8 +411,7 @@ random_forest_model$finalModel$importance
 random_forest_model$finalModel$confusion[,0:2]
 ```
 
-#### Gradient Boosting
-
+#### Gradient Boosting\
 ```{r Gradient Boosting Model, echo=FALSE}
 gbm_model <- readRDS("gbm_model.rds")
 
@@ -446,19 +420,18 @@ confusionMatrix(gbm_model)
 ```
 
 
-#### Model Selection
-
+#### Model Selection\
 ```{r create dataframe of model performance, echo=FALSE}
 models <- c("logistic_regression","decision_tree","random_forest","gradient_boosting")
 model_performance <- data.frame(matrix(unlist(models), nrow=4, byrow=TRUE), stringsAsFactors = FALSE)
 colnames(model_performance) <- c("model")
-true_positives <- c(84.7,85,98609,84.8)
+true_negatives<- c(84.7,85,98609,84.8)
 false_positives <- c(8.2,8.5,10553,8.3)
 false_negatives <- c(3.1,2.8,8237,3)
-true_negatives <- c(4,3.7,100876,3.9)
+true_positives <- c(4,3.7,100876,3.9)
 kappa <- c(0.355,0.34,0.119,0.351)
 
-model_performance <- model_performance %>% mutate(tp = true_positives, fps=false_positives, fn=false_negatives,tn=true_negatives)
+model_performance <- model_performance %>% mutate(tp = true_positives, fp=false_positives, fn=false_negatives,tn=true_negatives)
 
 model_performance <- model_performance %>% mutate(total=(model_performance$tp + model_performance$fp + model_performance$fn + model_performance$tn))
 
