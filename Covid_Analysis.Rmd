@@ -263,6 +263,8 @@ confusionMatrix(logistic_model)
 ```
 
 #### Decision Tree Model
+
+Decision tree model
 ```{r Decision Tree Model, echo=FALSE}
 decision_tree_model <- readRDS("decision_tree.rds")
 
