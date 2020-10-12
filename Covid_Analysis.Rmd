@@ -400,7 +400,7 @@ confusionMatrix(logistic_model)
 
 Decision tree model
 
-The dec
+The decision tree model was chosen as one of the classification models as it is fast, accurate and can handle a large amount of data. It is also easily interpreted visually. 
 =======
 #### Decision Tree Model\
 >>>>>>> 19eda045284a14b7edc88235ca3a4b005b07e080
