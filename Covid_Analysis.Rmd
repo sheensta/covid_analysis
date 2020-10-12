@@ -44,7 +44,11 @@ library(grid)
 library(gridExtra)
 library(ggcorrplot)
 library(knitr)
+<<<<<<< HEAD
 library(VIM)
+=======
+library(gbm)
+>>>>>>> 2b879039de880d3f1a09c034a683604477917258
 ```
 
 ##### **Data Dictionary** \
@@ -71,8 +75,9 @@ covid <- covid %>% filter(covid_res == 1)
 ```
 
 ```{r, echo=FALSE}
-
-# need to make this look prettier
+data_summary <- list('sex' =
+                       list('male' = ~ count(covid$sex,vars=2),
+                            'female' = ~ count(covid$sex,vars=1)))
 ```
 
 In order to explore the data further we will need to see how death is related to certain aspects of the data.
@@ -326,7 +331,7 @@ confusionMatrix(decision_tree_model)
 random_forest_model <- readRDS("RF_Crossvalidation_k10_rose.rds")
 
 random_forest_model$finalModel$importance
-prop.table(random_forest_model$finalModel$confusion[,0:2])
+random_forest_model$finalModel$confusion[,0:2]
 ```
 
 #### Gradient Boosting
@@ -334,11 +339,32 @@ prop.table(random_forest_model$finalModel$confusion[,0:2])
 ```{r Gradient Boosting Model, echo=FALSE}
 gbm_model <- readRDS("gbm_model.rds")
 
+#caret::varImp(gbm_model)
 confusionMatrix(gbm_model)
 ```
 
 
 #### Model Selection
+
+```{r create dataframe of model performance, echo=FALSE}
+models <- c("logistic_regression","decision_tree","random_forest","gradient_boosting")
+model_performance <- data.frame(matrix(unlist(models), nrow=4, byrow=TRUE), stringsAsFactors = FALSE)
+colnames(model_performance) <- c("model")
+true_positives <- c(84.7,85,98609,84.8)
+false_positives <- c(8.2,8.5,10553,8.3)
+false_negatives <- c(3.1,2.8,8237,3)
+true_negatives <- c(4,3.7,100876,3.9)
+
+model_performance <- model_performance %>% mutate(tp = true_positives, fps=false_positives, fn=false_negatives,tn=true_negatives)
+
+model_performance <- model_performance %>% mutate(total=(model_performance$tp + model_performance$fp + model_performance$fn + model_performance$tn))
+
+model_performance <- model_performance %>% mutate(accuracy = (model_performance$tp + model_performance$tn)/model_performance$total, sensitivity = model_performance$tp/(model_performance$tp+model_performance$fn), specificity = model_performance$tn/(model_performance$tn + model_performance$fp), precision = model_performance$tp/(model_performance$tp + model_performance$fp))
+
+model_performance <- model_performance %>% mutate(balanced_accuracy =(model_performance$sensitivity + model_performance$specificity)/2, f1 = 2*model_performance$tp/(2*model_performance$tp + model_performance$fp + model_performance$fn))
+
+kable(model_performance, format = 'pipe')
+```
 
 
 #### Deployment

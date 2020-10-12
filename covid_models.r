@@ -165,7 +165,7 @@ vif(logistic_regression_model_1)
 
 ###LOGISITC REGRESSION MODEL USING KFOLD WITH K = 10###
 set.seed(123)
-train_control <- trainControl(method = 'cv', number=10)
+train_control <- trainControl(method = 'cv', number = 10)
 logistic_regression_model_k10 <- train(deathyn ~., data = covid_complete_case_modeling, trControl = train_control, method = 'glm')
 saveRDS(logistic_regression_model_k10,"regression_model.rds")
 
