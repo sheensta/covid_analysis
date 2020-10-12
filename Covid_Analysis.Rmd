@@ -162,18 +162,18 @@ covid[factor_columns] <- lapply(covid[factor_columns], factor)
 ```{r precondition graphs, include=FALSE}
 # graph the data after cleaning
 theme_set(theme_minimal())
-p1 <- ggplot(covid_complete_case,aes(x=sex, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('Male','Female')) + ylab("") + xlab("") + ggtitle("Sex") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p2 <- ggplot(covid_complete_case,aes(x=pneumonia, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") + ggtitle("Pneumonia") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p3 <- ggplot(covid_complete_case,aes(x=diabetes, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") + ggtitle("Diabetes") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p4 <- ggplot(covid_complete_case,aes(x=copd, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") + ggtitle("COPD") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p5 <- ggplot(covid_complete_case,aes(x=asthma, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") + ggtitle("Asthma") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p6 <- ggplot(covid_complete_case,aes(x=inmsupr, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") + ggtitle("Inmunosuppressed") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p7 <- ggplot(covid_complete_case,aes(x=hypertension, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") + ggtitle("Hypertension") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p8 <- ggplot(covid_complete_case,aes(x=other_disease, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") + ggtitle("Other Diseases") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p9 <- ggplot(covid_complete_case,aes(x=cardiovascular, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") + ggtitle("Cardiovascular") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p10 <- ggplot(covid_complete_case,aes(x=obesity, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") + ggtitle("Obesity") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p11 <- ggplot(covid_complete_case,aes(x=renal_chronic, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") + ggtitle("Kidney Disease") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
-p12 <- ggplot(covid_complete_case,aes(x=tobacco, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") + ggtitle("Tobacco Use") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p1 <- ggplot(covid_complete_case,aes(x=sex, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('Male','Female')) + ylab("") +  ggtitle("Sex") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p2 <- ggplot(covid_complete_case,aes(x=pneumonia, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Pneumonia") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p3 <- ggplot(covid_complete_case,aes(x=diabetes, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Diabetes") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p4 <- ggplot(covid_complete_case,aes(x=copd, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("COPD") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p5 <- ggplot(covid_complete_case,aes(x=asthma, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Asthma") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p6 <- ggplot(covid_complete_case,aes(x=inmsupr, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Inmunosuppressed") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p7 <- ggplot(covid_complete_case,aes(x=hypertension, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Hypertension") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p8 <- ggplot(covid_complete_case,aes(x=other_disease, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Other Diseases") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p9 <- ggplot(covid_complete_case,aes(x=cardiovascular, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Cardiovascular") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p10 <- ggplot(covid_complete_case,aes(x=obesity, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Obesity") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p11 <- ggplot(covid_complete_case,aes(x=renal_chronic, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Kidney Disease") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
+p12 <- ggplot(covid_complete_case,aes(x=tobacco, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Tobacco Use") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none')
 ```
 ```{r prcondition graph grid, echo=FALSE}
 grid.arrange(p1,p2,p3,p4,p5,p6,p7,p9,p10,p11,p12,p8, ncol=4, nrow=3,
@@ -276,12 +276,14 @@ round(prop.table(confusionMatrix(tree.death.predicted, test_data$deathyn)$table)
 ```{r Random Forest Model, echo=FALSE}
 random_forest_model <- readRDS("RF_Crossvalidation_k10_rose.rds")
 
+random_forest_model$finalModel$importance
 prop.table(random_forest_model$finalModel$confusion[,0:2])
 ```
 
 #### Gradient Boosting
 
-```{r}
+```{r Gradient Boosting Model, echo=FALSE}
+
 
 ```
 
