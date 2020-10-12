@@ -228,6 +228,7 @@ During data exploration we learned that
 
 #### Data Imputation
 
+
 Data exploration showed that there were patients' of age 0 up to 120. As 120 years old could be an error in imputation or an outliar, to reduce error we used 3 standard deviations to replace the upper age range. Any age above 95 years old was replaced with 95. Age of 0 was left as it is, as there could be patients newborn or under the age of 1 years old. 
 
 ```{r, impute age outliers}
@@ -239,9 +240,14 @@ covid_complete_case$age[covid_complete_case$age > imputed_age] = imputed_age
 
 ### Modeling and Evaluation
 
+We have understood, cleaned and organized our data. We are not ready to create our prediction model. We have decided to create 4 models, evaluate them and then chose the model with the highest accuracy.  
 #### Feature Selection
 
+The data started with 23 columns. We have added the death column, which was obtained by the date_died column, as explained above. The death column will be used as our target variable. We decided not to include a few features in our models, as they do not meet our independent variable criteria. We excluded the icu, intubed and contact_other columns in our models as they are not a medical precondition. We chose 13 features in total to be used in our analysis, 12 which are the preconditions and 1 which is the patient's sex. We decided to keep sex as a factor in our analysis, as data exploration showed that difference in sex was significant in covid death rates. The 12 precondition features chosen were: pneumonia, pregnancy, diabetes, copd, asthma, inmsupr (immunosupressed), hypertension, other_disease, cardiovascular, obesity, renal_chronic and tobacco. Sex was the other feature chosen and it was used as a separate numerical feature. 
 ##### Train and Test Data
+
+The data was split into train and test sets to be used for our model. Train data contained 75 % of our data, while test data contained 25% of our data. 
+
 ```{r Select the data and split into train and test, include=FALSE}
 # select the columns needed for modeling
 covid_complete_case_modeling <- covid_complete_case %>% select(2,8:20,24)
@@ -264,6 +270,8 @@ confusionMatrix(logistic_model)
 ```
 
 #### Decision Tree Model
+
+Decision tree model
 ```{r Decision Tree Model, echo=FALSE}
 decision_tree_model <- readRDS("decision_tree.rds")
 
@@ -272,6 +280,8 @@ confusionMatrix(decision_tree_model)
 ```
 
 #### Random Forest Model
+
+
 ```{r Random Forest Model, echo=FALSE}
 random_forest_model <- readRDS("RF_Crossvalidation_k10_rose.rds")
 
