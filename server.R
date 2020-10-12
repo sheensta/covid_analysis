@@ -1,5 +1,8 @@
 # Define server logic
 library(ggplot2)
+library(shinyBS)
+library(shinyjs)
+
 
 risk <- read.csv('covid_risk.csv')
 check_percentile <- function(prediction) {

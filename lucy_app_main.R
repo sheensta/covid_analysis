@@ -43,9 +43,7 @@ ui <- fluidPage(
                                #checkboxInput('pregnancy1', 'Pregnancy'),
                                checkboxInput('other_disease1', 'Other chronic conditions'),
                     
-                               actionButton('predict', 'Predict', class = "btn btn-primary")
-                               
-                               
+                               actionButton('predict', 'Predict', class = "btn btn-primary"),
                              ), # sidebarPanel
                           
                            mainPanel(
@@ -66,10 +64,6 @@ ui <- fluidPage(
                              h3('\n'),
                              h3('\n'),
                              plotOutput('riskplot', width = '100%', height = '500px'),
-                             #actionButton('moreInfo', 'Show the Risk Plot', 
-                                          #class = "btn btn-primary")
-                             
-                             
                            ) # mainPanel
                         )
                            
@@ -78,19 +72,33 @@ ui <- fluidPage(
                            h3('Dataset:'),
                            tags$line('The model was trained using publicly-available '),
                            tags$a(href = 'https://www.kaggle.com/tanmoyx/covid19-patient-precondition-dataset', 'anonymized data'),
-                           tags$line('released by the Government of Mexico. The dataset contains over 200,000 confirmed individual COVID-19 cases, along with variables representing age, sex, various preconditions, and death date.'),
+                           tags$line(
+                             'released by the Government of Mexico. The dataset contains over 200,000 confirmed individual COVID-19 cases, along with variables representing age, sex, various preconditions, and death date.'
+                           ),
                            h3('Preprocessing:'),
-                           tags$line('The dataset was curated by Complete Case Analysis, in which an observation was removed if one or more of its predictor variables was missing, resulting in the removal of <1% of total observations. It was assumed that these data were Missing Completely At Random (MCAR).'),
+                           tags$line(
+                             'The dataset was curated by Complete Case Analysis, in which an observation was removed if one or more of its predictor variables was missing, thus resulting in the removal of <1% of total observations. It was assumed that these data were Missing Completely At Random (MCAR).'
+                           ),
                            h3('Model Selection'),
-                           tags$line('The following machine learning classifiers were trained on the data:'),
+                           tags$line(
+                             'The following machine learning classifiers were trained on the data:'
+                           ),
                            tags$div(tags$ul(
                              tags$li(tags$span('Logistic Regression')),
                              tags$li(tags$span('Random Forest')),
                              tags$li(tags$span('Decision Tree')),
-                             tags$li(tags$span('Gradient Boost')))
+                             tags$li(tags$span('Gradient Boost'))
+                           )),
+                           tags$line(
+                             'The Random Forest model cross validated with k = 10 folds and ROSE sampling had the highest overall accuracy and balanced accuracy (91% for both). However, due to its large size, it could not be deployed successfully to the shinyapps.io cloud. Ultimately, we chose to deploy with Logistic Regression for its interpretability and low memory usage.'
                            ),
-                           tags$line('Ultimately, we chose to deploy the application using Logistic Regression, due to its interpretability and low size'),
-                           h3('Model Accuracy:')),
+                           h3('Model Validations:'),
+                           tags$line(
+                             'The logistic regression model has an overall accuracy of 88.7%, specificity (true negative rate) of 91.2%, and sensitivity (true positive rate) of 56.3%. While the model is fairly accurate overall, it tends to underpredict cases where death occurred. Thus, this application is only meant to showcase ML-application as a proof-of-concept and should not be used to aid clinical decision-making
+.'
+                           ),
+                           tags$line(withMathJax("$$\\text{Logistic Regression }X_n=X_{n-1}-\\varepsilon$$"))
+                  ),
                   tabPanel("About the Authors", "This panel is intentionally left blank")
                   
                 ) # navbarPage
@@ -219,6 +227,23 @@ server<- function(input, output) {
       
     }
   })
+  output$resetbutton <- renderText({
+    if (input$moreInfo > 0){
+      button <- isolate(bsButton('resetbutton', 'Reset',
+                                 class = "btn btn-primary", 
+                                 type = "toggle",
+                                 value = TRUE,
+                                 block = TRUE))
+      isolate(paste(button))
+    }
+  })
+  observeEvent(input$resetbutton, {
+    # Reset data_next and data_all to 0
+    output$riskplotbutton <- renderText({})
+    output$prediction <- renderText({})
+    output$riskplot <- renderPlot({})
+  })
+  
   output$riskplotbutton <- renderText({
     if (input$predict > 0){
     button <- isolate(actionButton('moreInfo', 'Check Your Risk Plot',
@@ -291,14 +316,10 @@ server<- function(input, output) {
     }
     
   })
+  
   observeEvent(input$moreInfo, {
-    toggle(id = "prediction", time = 0.5, anim = TRUE, animType = "slide")
+    hideElement(id = "riskplotbutton", time = 0.5, anim = TRUE, animType = "fade")
   })
-  observeEvent(input$moreInfo, {
-    toggle(id = "riskplotbutton", time = 0.5, anim = TRUE, animType = "fade")
-  })
-
-
 }
 
 # Create Shiny object
