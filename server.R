@@ -102,7 +102,7 @@ server <- function(input, output) {
                     suffix,
                     '</sup>',
                     '</b>',
-                    ' percentile compared to confirmed positive cases within the general population. ',
+                    ' percentile compared to all predicted COVID-19 positive cases within the entire dataset. ',
                     risk
                 )
             ))
@@ -151,7 +151,7 @@ server <- function(input, output) {
                 ) +
                 labs(x = 'Death probability (%)', y = 'Proportion') +
                 ggtitle(
-                    'Predicted Distribution of COVID-19 Death Probabilities within the Population'
+                    'Population Distribution of Predicted Probabilities'
                 ) +
                 annotate(
                     'text',
