@@ -10,21 +10,21 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 #### **Abstract**
-This project focuses on building a machine learning model on predicting probability of death rate during the Covid-19 pandemic using supervised learning. Data obtained by the Mexican government was used. The data was visualized, cleaned and prepared for modeling. Prediction of the model uses the patients sex, age and 12 medical preconditions. Four different classification models were created: decision tree, random forest, logistic regression and gradient boosting models. The models were evaluated on their accuracy. The random forest model had the highest performance and accuracy, however, due to its large size, the logistic regression model was chosen for deployment. Deployment of the model was constructing using ShinyApp. An application was created that can be used on predicting probability of death based on age, sex and medical preconditions. The application can be used as a guide for medical professionals in decision making for resource distribution, as well as for patients who test positive with Covid-19 on whether to seek hospitalization. The app has it's limitations and it is advised to be used only as a guide, as it does not replace expert advice or government recommendations.
+This project focuses on building a machine learning model on predicting probability of death during the Covid-19 pandemic using supervised learning. Data obtained by the Mexican government was used. The data was visualized, cleaned and prepared for modeling. Prediction of the model uses the patients sex, age and 12 medical preconditions. Four different classification models were created: decision tree, random forest, logistic regression and gradient boosting models. The models were evaluated on their accuracy, specificity, and sensitivity along with other metrics. The random forest model had the highest performance and accuracy, however, due to its large size, the logistic regression model was chosen for deployment. Deployment of the model was constructed using ShinyApp. An application was created that can be used on predicting probability of death based on age, sex and medical preconditions. The application can be used as a guide for medical professionals in decision making for resource distribution, as well as for patients who test positive with Covid-19 on whether to seek hospitalization. The app has it's limitations and it is advised to be used only as a guide, as it does not replace expert advice or government recommendations.
 \
 \
 
 #### **Background**
 Covid-19 is a viral infection caused by the novel virus called severe acute respiratory syndrome 2 (SARS-COV-2). Incubation period of Covid-19 is 2-14 days, which is the time a person shows symptoms after being exposed to the virus. The main symptoms are fever, cough, runny nose, headache, fatigue and muscle aches. \
-The virus was first recorded in China in Fall 2019, however, around February 2020 it started rapidly spreading across the world. On March 11, 2020, the World Health Organization declared Covid-19 to be a global pandemic. One of the most tragic events of Covid-19 was the first wave of the virus in Italy, where around 44,000 deaths and 250,000 infections were recorded in just 3 months, from March to May 2020. Overwhelmed hospitals, shortage of medical supplies, hospital beds, icu units and medical staff, were a great challenge during the first wave of the virus. However, the fear of these factors is rising as the second wave of the pandemic is currently happening in the world. The virus has caused over 3 million deaths and has spread across 188 countries to date. \
+The virus was first recorded in China in Fall 2019, however, around February 2020 it started rapidly spreading across the world. On March 11, 2020, the World Health Organization declared Covid-19 to be a global pandemic. One of the most tragic events of Covid-19 was the first wave of the virus in Italy, where around 44,000 deaths and 250,000 infections were recorded in just 3 months, from March to May 2020. Overwhelmed hospitals, shortage of medical supplies, hospital beds, icu units and medical staff, were a great challenge during the first wave of the virus. However, the fear of these factors is rising as the second wave of the pandemic is currently happening around the world. The virus has caused over 3 million deaths and has spread across 188 countries to date. \
 Governments all over the world have instructed people who tested positive for Covid-19 to quarantine for 14 days if they have mild symptoms or to visit the nearest hospital if they experience difficulty breathing, cyanosis or chest pain. People are considered at high risk of developing more serious symptoms or death if they have pre-existing medical conditions such as, but not limited to, chronic obstructive pulmonary disease (COPD), chronic kidney disease, obesity, smoking, immunocompromised, heart conditions, type two diabetes and cancer. Older age population is also at higher risk, as they are more likely to have a pre-existing medical condition and lower immunity. \
-As Covid-19 is still a threat to public health worldwide and the second wave of the virus is now growing globally, information is needed by medical professionals and people tested positive with Covid-19 when making decisions on whether hospitalization is needed. The use of machine learning is growing in the fight against Covid-19. \
+As Covid-19 is still a threat to public health worldwide and the second wave of the virus is now growing globally, information is needed by medical professionals and people who have tested positive with Covid-19 when making decisions on whether hospitalization is needed. The use of machine learning is growing in the fight against Covid-19. \
 A death prediction app can assist medical professionals to make decisions on which patients are at high risk and require hospitalization. In addition, the app can also assist people infected with Covid-19 in deciding whether to self-quarantine or go to a hospital. We expect that our application, when used in conjunction with expert medical advice, will help guide resource allocation during the second wave.
 \
 \
 
 #### **Objective**
-The objective of this project is to create a supervised machine learning model that predicts probability of death due to Covid-19 based on age and pre-existing medical conditions. This app could be used by medical professionals to guide resource allocation for the treatment of Covid-19 patients. Having an app that predicts death probability can help hospitals decide which patients need hospitalization. In addition, the app can also be used by people who test positive with covid-19 as a guide to decide whether they should visit the hospital. Having this app can reduce unnecessary surges to the hospital of people who are at low risk. The app is simple to use and would be easily accessible by anyone. \
+The objective of this project is to create a supervised machine learning model that predicts probability of death due to Covid-19 based on age and pre-existing medical conditions. This app could be used by medical professionals to guide resource allocation for the treatment of Covid-19 patients. Having an app that predicts death probability can help hospitals decide which patients need hospitalization. In addition, the app can also be used by people who test positive with covid-19 as a guide to decide whether they should visit the hospital. Having this app can reduce unnecessary surges to the hospital of people who are at low risk. The app is simple to use and easily accessible by anyone. \
 Disclaimer: This application should only be used as a guide and is not a replacement for expert advice or government recommendations.
 \
 \
@@ -194,7 +194,7 @@ aggr_plot = aggr(proc_NA(covid), numbers=TRUE, sortVars=TRUE, labels=names(data)
 Missing data in the columns were characterized by 97 = not-applicable, 98 = ignored or not specified or 99 = not specified. In the precondition columns, missing data was proportionately low as seen in the visualization above.
 \
 We analyzed the data and realized that 97 was used in 3 columns: pregnancy, intubed or icu. Considering that pregnancy only applies to females, we checked whether 97 indicated that the person was male. Our analysis showed that 97 meant male patient. It was changed to zero in our table. 
-We also explored 97 value in intubed and icu columns. We realized that it would be inapplicable to say a patient was intubed or on icu if they were discharged the same day. We did ran an analysis and noticed that 97 was only used for patients who were not hospitalized in both cases. Since patient’s were not hospitalized, that means that they did not need to be intubed or placed in icu, therefore 97 means “no” in these two columns. We substituted the 97 values with 0’s (no) in our tables.
+We also explored 97 value in intubed and icu columns. We realized that it would be inapplicable to say a patient was intubed or on icu if they were discharged the same day. We ran an analysis and noticed that 97 was only used for patients who were not hospitalized in both cases. Since patient’s were not hospitalized, that means that they did not need to be intubed or placed in icu, therefore 97 means “no” in these two columns. We substituted the 97 values with 0’s (no) in our tables.
 The rows that contained the values 98 and 99, which mean ignored or not specified were removed from our data. These values were ignored in the icu and intubed columns which were not included in our analysis, as they are not a precondition. We removed any observation where a precondition column had a missing value (value = 98 or 99), under the assumption that data were Missing Completely At Random (MCAR). This still left us with a dataset of 218275 cases. \
 To clean the data, we converted all 2’s that represent “no”s into zero’s, since we are using a binary system for all preconditions. This excludes age as it is not a binary categorical variable. 
 \
@@ -240,7 +240,7 @@ covid_subsets <- list(
 r <- 1
 for (s in covid_subsets){
   set_table[r,1] <- length(s$id)
-  set_table[r,2] <- round(sum(s$deathyn == 'Y')/length(s$deathyn)*100,2)
+  set_table[r,2] <- round(sum(s$deathyn == 1)/length(s$deathyn)*100,2)
   set_table[r,3] <- round(mean(s$age),2)
   set_table[r,4] <- median(s$age)
   set_died <- s %>% filter(deathyn == 1) 
@@ -253,6 +253,9 @@ for (s in covid_subsets){
 }
 kable(set_table, format = 'pipe')
 ```
+
+In order to assess the extent missing variables we created subsets of the data. The first set is the entire covid positive dataset. Covid_complete_case contains all of the cases that had a response of yes or no in the precondition columns. Covid_incomplete_cases contains all of the cases that had at least one response of 97, 98, or 99 in the precondition columns. Covid_ignored_cases contains all of the cases that had a response of 98 in one of the precondition columns. Finally, covid_blank_cases contains all of the cases that had a response of 98 in all of the precondition columns. \
+The table clearly shows that the complete cases make up the majority of the cases. The cases with missing data were more likely to die and were often older patients. 
 
 ```{r convert column entries, include=FALSE}
 # convert sex and pre-existing conditions to 0 and 1 (male, female. no, yes)
@@ -300,10 +303,10 @@ grid.arrange(p1,p2,p3,p4,p5,p6,p7,p9,p10,p11,p12,p8, ncol=4, nrow=3,
              top = textGrob("Coronovirus Mortality Rates and Preconditions",gp=gpar(fontsize=20)))
 ```
 \
-The graphs above show the comparison between our predictor variables and death. The proportion of deaths is represented by the y-axis. For example, in the “Sex” variable graph, we observe that the male sex has a greater proportion of individuals who died from Covid-19 compared to the female sex. 
- The highest proportion of death is seen in patients with pneumonia, kidney disease, and COPD.
- \
- \
+The graphs above show the comparison between our predictor variables and death. The proportion of deaths is represented by the y-axis. For example, in the “Sex” variable graph, we observe that the male sex has a greater proportion of individuals who died from Covid-19 compared to females. 
+The highest proportion of death is seen in patients with pneumonia, kidney disease, and COPD.
+\
+\
  
 ##### **Correlation of variables**
 To perform the correlation between our independent variables, we used the Chi-squared test, as a standard correlogram using Pearson's R does not accept categorical variables. However, we were unable to use the original p-value provided by the test as samples higher than a few hundred typically always return p < 0.05. To adjust for our large sample size, we used Cramér's V test instead. A higher Cramér's V value denotes stronger correlation.
@@ -349,7 +352,7 @@ During data exploration we learned that there was a relatively low proportion of
 \
 
 ##### **Data Imputation**
-Data exploration showed that there were patients' of age 0 up to 120. As 120 years old could be an error in imputation or an outlier, to reduce error we used 3 standard deviations to replace the upper age range. Any age above 95 years old was replaced with 95. Age of 0 was left as it is, as there could be patients newborn or under the age of 1 years old. 
+Data exploration showed that there were patients' of age 0 up to 120. As 120 years old could be an error in imputation or an outlier, we decided to impute the upper age range to reduce error. Any age above 95 years old was replaced with 95. Age of 0 was left as it is, as there could be patients newborn or under the age of 1 years old. 
 \
 ```{r, impute age outliers}
 mean_age <- mean(covid_complete_case$age)
@@ -370,7 +373,7 @@ The data started with 23 columns. We have added the death column, which was obta
 \
 
 ##### **Cross Validation**
-The data was split into k = 10 folds. During each training iteration, one of the k subsets was used as the test and the other k-1 subsets were used as the training set.  This method was used over the simple train-test-split as it gives a more valid estimation of model effectiveness.
+The data was split into k = 10 folds. During each training iteration, one of the k subsets was used as the test and the other k-1 subsets were used as the training set.  This method was used instead of the simple train-test-split as it gives a more valid estimation of model effectiveness.
 \
 ```{r Select the data, include=FALSE}
 # select the columns needed for modeling
@@ -382,7 +385,8 @@ covid_complete_case_modeling[factor_columns] <- lapply(covid_complete_case[facto
 \
 
 ##### **Logistic Regression Model**
-\
+Logistic regression is a common model used in binary classification problems. One of the benefits of logistic regression is its interpretability. The model produces an easy to read equation that shows the variable importance. For example, the coeficient for pneumonia is 2.25, this means that someone with pneumonia has 2.25% higher chance of dying than someone who doesn't have pneumonia (holding all other factors constant). Logistic regression models are often used to classify binary dependent variables. In our case we did not want to classify someone as dead or alive so we will only be interpretting the value provided by the equation as a specific case risk. The accuracy for the logisitc regression model was 88.66%. While it was very good at predicting if someone would live, it struggled to predict death. Running the model through an upsampling method did not improve the results.
+
 ```{r Logisitc Regression Model, echo=FALSE}
 logistic_model <- readRDS('regression_model.rds')
 
@@ -393,7 +397,7 @@ confusionMatrix(logistic_model)
 
 ##### **Decision Tree Model**
 The decision tree model was chosen as one of the classification models as it is fast, accurate and can handle a large amount of data. It is also easily interpreted visually and does not take a lot of data preparation. 
-The decision tree model yielded a 89.03 % total accuracy. The model had a specificity of 91.08 % and a sensitivity of 58.77 %. The model very is very accurate at predicting non-death, but it's not accurate at predicting death. This is more likely due to the data being unbalanced, as most of the data had non-death. For this reason, the model was not chosen to make the application for this project. 
+The decision tree model yielded a 89.03 % total accuracy. The model had a specificity of 91.08 % and a sensitivity of 58.77 %. The model very is very accurate at predicting non-death, but it's not accurate at predicting death. 'This is more likely due to the data being unbalanced, as most of the data had non-death. For this reason, the model was not chosen to make the application for this project.' Running the model through an upsampling method did not improve the results.
 \
 ```{r Decision Tree Model, echo=FALSE}
 decision_tree_model <- readRDS("decision_tree.rds")
@@ -424,8 +428,8 @@ random_forest_model$finalModel$confusion[,0:2]
 \
 
 ##### **Gradient Boosting**
-Gradient boosting is a method of converting weak learners into strong learners. The model begins by training a decision tree with equal weight, and then we will increase the weights of those observations that are difficult to classify and lower the weights for easy ones to create a new tree. Our model is therefore combination of tree 1 and tree 2. Gradient boosting identifies the shortcomings by using gradients in the loss function (y=ax+b+e, e needs a special mention as it is the error term). The loss function is a measure indication how good are model’s coefficients are at fitting the underlying data. 
-We used the package “gbm” to train the gbm model and used cross-validation method to determine the best iteration. There are several ways we can choose for distribution of our response variable, for example-“bernoulli” (logistic regression for 0-1 outcome), “gaussian”(squared errors), “tdist” (t-distribution loss), we used bernoulli for our gbm model.  The overall accuracy for this model is 88.67%. 
+Gradient boosting is a method of converting weak learners into strong learners. The model begins by training a decision tree with equal weight, and then increasing the weights of those observations that are difficult to classify and then lowering the weights for easier ones to create a new tree. Our model is therefore a combination of tree 1 and tree 2. Gradient boosting identifies the shortcomings by using gradients in the loss function (y=ax+b+e, e needs a special mention as it is the error term). The loss function is a measure indication of how good the model’s coefficients are at fitting the underlying data. 
+We used the package “gbm” to train the gbm model and used k-fold cross-validation method to determine the best iteration. There are several methods we can choose for distribution of our response variable, for example-“bernoulli” (logistic regression for 0-1 outcome), “gaussian”(squared errors), “tdist” (t-distribution loss), we used bernoulli for our gbm model.  The overall accuracy for this model is 88.67%, however, like the logistic regression and decision tree models, the gradient boosting model struggled to predict death, resulting in a low sensitivity. 
 
 ```{r Gradient Boosting Model, echo=FALSE}
 gbm_model <- readRDS("gbm_model.rds")
@@ -436,8 +440,8 @@ confusionMatrix(gbm_model)
 \
 
 ##### **Model Selection**
-We created four different models for our project available and we selected the best one for deployment.
-As you can observe from the table, the random forest model has the best performance, as its accuracy is 91.4% which is high. Also, it has the highest F1 score. The other three models have good performance as well, but all have some limitations, as described in each model above. However, unfortunately we can’t use the random forest model for deployment due to the size of the model, as the calculation will take too long if we use it. Therefore, we chose the second best model, the logistic regression model, for deployment. The logistic regression model has an 88.7% accuracy and 91.2% specificity, which is a good choice for deployment.
+
+As you can observe from the table, the random forest model has the best performance, as its accuracy and F1 score are 91.4% and 91.5% respectively. The other three models performed well, but all have some limitations, as described above. Unfortunately we are unable to use the random forest model for deployment due to the size of the model file. We chose the logistic regression model for deployment as it was still fairly accurate, had the 2nd best F1 score, and the equation made deployment simpler.
 
 ```{r create dataframe of model performance, echo=FALSE}
 models <- c("logistic_regression","decision_tree","random_forest","gradient_boosting")
@@ -471,14 +475,14 @@ kable(model_performance_output, format = 'pipe')
 \
 
 ##### **Deployment**
-We created an application that used one of our machine-learning models with R Shiny. The user can choose from a checklist of pre-set parameters based on the model's predictor variables (e.g. Age, Sex, various preconditions) in the UI, in which the server will then output a probability of death. The application then compares the predicted probability with the distribution of all cases predicted by the model and returns a risk score (low, middle, high) based on how the predicted probability compared to the entire dataset predicted by the model.  
+We created an application that used the logistic regression model with R Shiny. The user can choose from a checklist of pre-set parameters based on the model's predictor variables (e.g. age, sex, various preconditions) in the UI, in which the server will then output a probability of death. The application then compares the predicted probability with the distribution of all cases predicted by the model and returns a risk score (low, middle, high) based on how the predicted probability compared to the entire dataset.  
 
 While the Random Forest model with ROSE sampling was the most accurate, it was too large to be deployed with the Shinyapps.io cloud. Thus, the logistic regression equation, with its high interpretability and low memory usage, was chosen for the application back-end instead. The application can be found here [ https://sean-z.shinyapps.io/covid_analysis/]( https://sean-z.shinyapps.io/covid_analysis/).   
 \
 
 #### **Conclusion**
-In this project we used supervised machine learning to create an application that predicts probability of death from Covid-19 based on age and pre-existing medical conditions. The dataset was obtained from the Mexican government. The data was cleaned and a total of 13 features were included in the models. Twelve features were medical preconditions as binary data. The last feature was age as a categorical data. Four different machine learning models were created: decision tree model, logistic regression model, random forest model and gradient boosting model. The were evaluated based on accuracy from which the random forest model was the one with the highest accuracy. However, due to the large size of the random forest model, the logistic regresion model was selected for building our application. Our application is displayed on shiny app. It can be used by medical professionals as a guidance in decision making for hospitalization of patients and use of medical resources during the Covid-19 pandemic. It can also be used by people tested positive with Covid-19 as a guide on whether to seek hospitalization. The application is not to replace experpert advice or governmental recommendations. \
-There are limitations to be considered for this project. First of all, the dataset was obtained from the Mexican government and it only contains Mexican population. This means that the data does not represent the whole world population diversity. Furthermore, the data is from the first wave of the virus. Viruses are known to change or mutate, so the data might not reflect all types of Covid-19 strains. A few different strains are known of Covid-19, thus this data might not reflect all of them, especially the ones that have been from a recent mutation. In addition, the preconditions severity is unknown. Depending on how severe a condition is, it can affect death probability. This application is build on the assumptions that all precondtions are in equal severity. Also, the Covid-19 test is not 100% accurate. Our model does not account for the accuracy of the Covid-19 test, which could affect the prediction results. Finally, we do not know whether it is a Covid-19 related death. As many patients had other preconditions, it is not for certain known that each of them died from Covid-19.\
+In this project we used supervised machine learning to create an application that predicts probability of death from Covid-19 based on age, sex, and pre-existing medical conditions. The dataset was obtained from Kaggle and prepared by the Mexican government. The data was cleaned and a total of 13 features were included in the models. Eleven features were medical preconditions as binary data. Four different machine learning models were created: decision tree model, logistic regression model, random forest model and gradient boosting model. They were evaluated based on accuracy from which the random forest model was the one with the highest accuracy. However, due to the large size of the random forest model, the logistic regression model was selected for building our application. Our application is displayed on shiny app. It can be used by medical professionals as a guidance in decision making for the hospitalization of patients and use of medical resources during the Covid-19 pandemic. It can also be used by people who have tested positive with Covid-19 as a guide on whether to seek hospitalization. The application is not to replace expert advice or governmental recommendations. \
+There are limitations to be considered for this project. First of all, the dataset was obtained from the Mexican government and it only contains Mexican population. This means that the data does not represent the whole world population diversity. Furthermore, the data is from the first wave of the virus when less was known about the virus. Viruses are known to change or mutate, so the data might not reflect all types of Covid-19 strains. A few different strains are known of Covid-19, thus this data might not reflect all of them, especially the ones that have been from a recent mutation. In addition, the preconditions severity is unknown. Depending on how severe a condition is, it can affect death probability. This application is build on the assumptions that all precondtions are in equal severity. Also, the Covid-19 test is not 100% accurate. Our model does not account for the accuracy of the Covid-19 test, which could affect the prediction results. We also acknowledge the fact that some of the cases listed may have died after the data was collected. Finally, we do not know whether it is a Covid-19 related death. As many patients had other preconditions, we cannot know for certain that each of them died from Covid-19.\
 Overall, we were able to build an accurate model that predicts the probability of death based on preconditions for confirmed-positive Covid-19 patients. However, our model does have limitations, as it was built mainly to demonstrate a proof-of-concept. Further tuning would be necessary to improve model accuracy and stakeholder decision-making.
 \
 \
