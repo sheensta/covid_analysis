@@ -397,12 +397,10 @@ confusionMatrix(logistic_model)
 
 <<<<<<< HEAD
 #### Decision Tree Model
-
-Decision tree model
-
-The decision tree model was chosen as one of the classification models as it is fast, accurate and can handle a large amount of data. It is also easily interpreted visually. 
 =======
-#### Decision Tree Model\
+
+The decision tree model was chosen as one of the classification models as it is fast, accurate and can handle a large amount of data. It is also easily interpreted visually and does not take a lot of data preparation. 
+The decision tree model yielded a 89.03 % total accuracy. The model had a specificity of 91.08 % and a sensitivity of 58.77 %. The model very is very accurate at predicting non-death, but it's not accurate at predicting death. This is more likely due to the data being unbalanced, as most of the data had non-death. For this reason, the model was not chosen to make the application for this project. 
 >>>>>>> 19eda045284a14b7edc88235ca3a4b005b07e080
 
 ```{r Decision Tree Model, echo=FALSE}
