@@ -9,25 +9,30 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-##### **Abstract**
-This project focuses on building a machine learning model on predicting probability of death rate during the Covid-19 pandemic using supervised learning. Data obtained by the Mexican government was used. The data was visualized, cleaned and prepared for modeling. Prediction of the model uses the patients sex, age and 12 medical preconditions. Four different classification models were created: decision tree, random forest, logistic regression and gradient boosting models. The models were evaluated on their accuracy. The random forest model had the highest performance and accuracy, however, due to its large size, the logistic regression model was chosen for deployment. Deployment of the model was constructing using ShinyApp. An application was created that can be used on predicting probability of death based on age, sex and medical preconditions. The application can be used as a guide for medical professionals in decision making for resource distribution, as well as for patients who test positive with Covid-19 on whether to seek hospitalization. The app has it's limitations and it is advised to be used only as a guide, as it does not replace expert advice or government recommendations. 
-
-##### **Background**\
+#### **Abstract**
+This project focuses on building a machine learning model on predicting probability of death rate during the Covid-19 pandemic using supervised learning. Data obtained by the Mexican government was used. The data was visualized, cleaned and prepared for modeling. Prediction of the model uses the patients sex, age and 12 medical preconditions. Four different classification models were created: decision tree, random forest, logistic regression and gradient boosting models. The models were evaluated on their accuracy. The random forest model had the highest performance and accuracy, however, due to its large size, the logistic regression model was chosen for deployment. Deployment of the model was constructing using ShinyApp. An application was created that can be used on predicting probability of death based on age, sex and medical preconditions. The application can be used as a guide for medical professionals in decision making for resource distribution, as well as for patients who test positive with Covid-19 on whether to seek hospitalization. The app has it's limitations and it is advised to be used only as a guide, as it does not replace expert advice or government recommendations.
 \
+\
+
+#### **Background**
 Covid-19 is a viral infection caused by the novel virus called severe acute respiratory syndrome 2 (SARS-COV-2). Incubation period of Covid-19 is 2-14 days, which is the time a person shows symptoms after being exposed to the virus. The main symptoms are fever, cough, runny nose, headache, fatigue and muscle aches. \
 The virus was first recorded in China in Fall 2019, however, around February 2020 it started rapidly spreading across the world. On March 11, 2020, the World Health Organization declared Covid-19 to be a global pandemic. One of the most tragic events of Covid-19 was the first wave of the virus in Italy, where around 44,000 deaths and 250,000 infections were recorded in just 3 months, from March to May 2020. Overwhelmed hospitals, shortage of medical supplies, hospital beds, icu units and medical staff, were a great challenge during the first wave of the virus. However, the fear of these factors is rising as the second wave of the pandemic is currently happening in the world. The virus has caused over 3 million deaths and has spread across 188 countries to date. \
 Governments all over the world have instructed people who tested positive for Covid-19 to quarantine for 14 days if they have mild symptoms or to visit the nearest hospital if they experience difficulty breathing, cyanosis or chest pain. People are considered at high risk of developing more serious symptoms or death if they have pre-existing medical conditions such as, but not limited to, chronic obstructive pulmonary disease (COPD), chronic kidney disease, obesity, smoking, immunocompromised, heart conditions, type two diabetes and cancer. Older age population is also at higher risk, as they are more likely to have a pre-existing medical condition and lower immunity. \
 As Covid-19 is still a threat to public health worldwide and the second wave of the virus is now growing globally, information is needed by medical professionals and people tested positive with Covid-19 when making decisions on whether hospitalization is needed. The use of machine learning is growing in the fight against Covid-19. \
-A death prediction app can assist medical professionals to make decisions on which patients are at high risk and require hospitalization. In addition, the app can also assist people infected with Covid-19 in deciding whether to self-quarantine or go to a hospital. We expect that our application, when used in conjunction with expert medical advice, will help guide resource allocation during the second wave. 
+A death prediction app can assist medical professionals to make decisions on which patients are at high risk and require hospitalization. In addition, the app can also assist people infected with Covid-19 in deciding whether to self-quarantine or go to a hospital. We expect that our application, when used in conjunction with expert medical advice, will help guide resource allocation during the second wave.
 \
-##### **Objective**\
+\
+
+#### **Objective**
 The objective of this project is to create a supervised machine learning model that predicts probability of death due to Covid-19 based on age and pre-existing medical conditions. This app could be used by medical professionals to guide resource allocation for the treatment of Covid-19 patients. Having an app that predicts death probability can help hospitals decide which patients need hospitalization. In addition, the app can also be used by people who test positive with covid-19 as a guide to decide whether they should visit the hospital. Having this app can reduce unnecessary surges to the hospital of people who are at low risk. The app is simple to use and would be easily accessible by anyone. \
 Disclaimer: This application should only be used as a guide and is not a replacement for expert advice or government recommendations.
 \
-#### **Data Analysis**\
-The [dataset](https://www.kaggle.com/tanmoyx/covid19-patient-precondition-dataset) was made publicly available from the Mexican government. It has over 560,000 anonymous records of patients who attended a hospital from March – July 2020 regarding Covid-19. Over 200,000 records were confirmed positive for Covid-19. 
+\
 
-
+#### **Data Analysis**
+The [dataset](https://www.kaggle.com/tanmoyx/covid19-patient-precondition-dataset) was made publicly available from the Mexican government. It has over 560,000 anonymous records of patients who attended a hospital from March – July 2020 regarding Covid-19. Over 220,000 records were confirmed positive for Covid-19. 
+\
+\
 ```{r load packages, include=FALSE}
 # load the packages
 library(dplyr)
@@ -47,8 +52,8 @@ library(gbm)
 library(qwraps2)
 ```
 
-##### **Data Dictionary** \
-\
+
+##### **Data Dictionary**
 The table below defines each column in the dataset.
 ```{r create a table describing the columns and rows, echo=FALSE}
 data_description <- c("Case identifying number", "Sex of patient, where 1 means female, 2 means male, 99 means non-specified",  "Describes the type of care the patient received, where 1 means discharged the same day, 2 means hospitalized, 99 means non-specified", "Hospital entry date", "The first date the patient started experiencing symptoms", "The date the patient died if date is shown or 9999.99 if patient did not die or it is not-specified whether they died or not", "Whether a patient was intubed in the hospital, where 1 means yes, 2 means no, 97 means not applicable. Our analysis showed that 97 was used for patients who were discharged the same day.", "Whether the patient had pneumonia as a preexisting condition, where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified", "Patient's age", "Whether a female patient was pregnant or not. Our analysis showed that 97 that means not applicable was used for male patients", "If the patient had diabetes as a preexisting condition, where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified)", "Whether the patient had copd - chronic obstructive pulmonary disease as a preexisting condition , where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified", "Whether the patient had asthma as a preexisting condition , where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified", "Whether the patient was immunocompromised, where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified", "Whether the patient had hypertension as a preexisting condition , where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified", "Whether the patient had another disease not listed as a preexisting condition, where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified", "Whether the patient had a cardiovascular disease as a preexisting condition, where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified", "Whether the patient was obese , where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified", "Whether the patient had chronic renal disease as a preexisting condition , where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified", "Whether the patient smoked tabacco, where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified", "Whether the patient had contact with apositive case prior to contacting the virus , where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified.", "Whether the patient tested positive or not , where 1 means yes, 2 means no, 97 means not applicable, 98 means ignored/not specified, 99 means not specified.", "Whether a patient was intubed in the hospital, where 1 means yes, 2 means no, 97 means not applicable. 97 was used for patients who were discharged the same day.")
@@ -63,8 +68,10 @@ colnames(datadictionary) <- c("Label", "             ", "Description")
 kable(datadictionary, format='pipe')
 
 ```
+\
+\
 
-##### **Data Exploration**\
+##### **Data Exploration**
 The first step in our data exploration is to load in the data and then remove any cases that were not covid positive as they will have no affect on our analysis. We will then look at a summary of the data.
 
 ```{r load data and filter out non-positive cases, message=FALSE}
@@ -151,7 +158,7 @@ orig_opt <- options()$qwraps2_markup
 options(qwraps2_markup = "markdown")
 summary_table(covid, data_summary)
 ```
-
+\
 In order to explore the data further we will need to see how death is related to certain aspects of the data.
 
 ```{r add a deathyn column}
@@ -159,7 +166,9 @@ covid<- covid %>%
   mutate(deathyn = ifelse(date_died == '9999-99-99', '0','1'))
 ```
 \
-#### Missing Data\
+\
+
+##### **Missing Data**
 First, we visualized the missing data.
 
 ```{r visualizing missing data, echo = FALSE}
@@ -181,6 +190,7 @@ proc_NA <- function(df){
 #MISSING Visualizations
 aggr_plot = aggr(proc_NA(covid), numbers=TRUE, sortVars=TRUE, labels=names(data), ylab=c("Histogram of missing data","Pattern"))
 ```
+\
 Missing data in the columns were characterized by 97 = not-applicable, 98 = ignored or not specified or 99 = not specified. In the precondition columns, missing data was proportionately low as seen in the visualization above.
 \
 We analyzed the data and realized that 97 was used in 3 columns: pregnancy, intubed or icu. Considering that pregnancy only applies to females, we checked whether 97 indicated that the person was male. Our analysis showed that 97 meant male patient. It was changed to zero in our table. 
@@ -188,6 +198,9 @@ We also explored 97 value in intubed and icu columns. We realized that it would 
 The rows that contained the values 98 and 99, which mean ignored or not specified were removed from our data. These values were ignored in the icu and intubed columns which were not included in our analysis, as they are not a precondition. We removed any observation where a precondition column had a missing value (value = 98 or 99), under the assumption that data were Missing Completely At Random (MCAR). This still left us with a dataset of 218275 cases. \
 To clean the data, we converted all 2’s that represent “no”s into zero’s, since we are using a binary system for all preconditions. This excludes age as it is not a binary categorical variable. 
 \
+\
+
+##### **Data Subsets**
 ```{r view differences between complete and incomplete cases, echo=FALSE}
 
 # filter out incomplete cases
@@ -258,7 +271,7 @@ covid_complete_case$obesity[covid_complete_case$obesity == 2] <- 0
 covid_complete_case$renal_chronic[covid_complete_case$renal_chronic == 2] <- 0
 covid_complete_case$tobacco[covid_complete_case$tobacco == 2] <- 0
 ```
-
+\
 We plotted individual graphs to predict the relationship between our independent variables and our target variable death. 
 
 ```{r convert the categorical variables to factors, include=FALSE}
@@ -270,29 +283,31 @@ covid_complete_case[factor_columns] <- lapply(covid_complete_case[factor_columns
 ```{r precondition graphs, include=FALSE}
 # graph the data after cleaning
 p1 <- ggplot(covid_complete_case,aes(x=sex, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('Male','Female')) + ylab("") + xlab("") + ggtitle("Sex") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
-p2 <- ggplot(covid_complete_case,aes(x=pneumonia, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No (2)','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Pneumonia") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
-p3 <- ggplot(covid_complete_case,aes(x=diabetes, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No (2)','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Diabetes") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
-p4 <- ggplot(covid_complete_case,aes(x=copd, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No (2)','Diagnosed')) + ylab("") + xlab("") +  ggtitle("COPD") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
-p5 <- ggplot(covid_complete_case,aes(x=asthma, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No (2)','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Asthma") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
-p6 <- ggplot(covid_complete_case,aes(x=inmsupr, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No (2)','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Inmunosuppressed") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
-p7 <- ggplot(covid_complete_case,aes(x=hypertension, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No (2)','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Hypertension") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
-p8 <- ggplot(covid_complete_case,aes(x=other_disease, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No (2)','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Other Diseases") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
-p9 <- ggplot(covid_complete_case,aes(x=cardiovascular, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No (2)','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Cardiovascular") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
-p10 <- ggplot(covid_complete_case,aes(x=obesity, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No (2)','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Obesity") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
-p11 <- ggplot(covid_complete_case,aes(x=renal_chronic, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No (2)','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Kidney Disease") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
-p12 <- ggplot(covid_complete_case,aes(x=tobacco, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No (2)','Yes (1)')) + ylab("") + xlab("") +  ggtitle("Tobacco Use") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p2 <- ggplot(covid_complete_case,aes(x=pneumonia, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Pneumonia") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p3 <- ggplot(covid_complete_case,aes(x=diabetes, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Diabetes") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p4 <- ggplot(covid_complete_case,aes(x=copd, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("COPD") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p5 <- ggplot(covid_complete_case,aes(x=asthma, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Asthma") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p6 <- ggplot(covid_complete_case,aes(x=inmsupr, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Inmunosuppressed") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p7 <- ggplot(covid_complete_case,aes(x=hypertension, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Hypertension") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p8 <- ggplot(covid_complete_case,aes(x=other_disease, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") +  xlab("") + ggtitle("Other Diseases") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p9 <- ggplot(covid_complete_case,aes(x=cardiovascular, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Cardiovascular") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p10 <- ggplot(covid_complete_case,aes(x=obesity, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Obesity") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p11 <- ggplot(covid_complete_case,aes(x=renal_chronic, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Diagnosed')) + ylab("") + xlab("") +  ggtitle("Kidney Disease") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
+p12 <- ggplot(covid_complete_case,aes(x=tobacco, fill=deathyn,alpha=0.3)) + geom_bar(position='fill') + scale_fill_manual(values=c('white','red')) + scale_x_discrete(labels = c('No','Yes')) + ylab("") + xlab("") +  ggtitle("Tobacco Use") + theme(plot.title=element_text(hjust=0.5,size=10), legend.position = 'none') + ylim(0,0.5)
 ```
 ```{r prcondition graph grid, echo=FALSE, warning=FALSE}
 grid.arrange(p1,p2,p3,p4,p5,p6,p7,p9,p10,p11,p12,p8, ncol=4, nrow=3,
              top = textGrob("Coronovirus Mortality Rates and Preconditions",gp=gpar(fontsize=20)))
 ```
-
+\
 The graphs above show the comparison between our predictor variables and death. The proportion of deaths is represented by the y-axis. For example, in the “Sex” variable graph, we observe that the male sex has a greater proportion of individuals who died from Covid-19 compared to the female sex. 
  The highest proportion of death is seen in patients with pneumonia, kidney disease, and COPD.
  \
-#### Correlation of variables \
+ \
+ 
+##### **Correlation of variables**
 To perform the correlation between our independent variables, we used the Chi-squared test, as a standard correlogram using Pearson's R does not accept categorical variables. However, we were unable to use the original p-value provided by the test as samples higher than a few hundred typically always return p < 0.05. To adjust for our large sample size, we used Cramér's V test instead. A higher Cramér's V value denotes stronger correlation.
-
+\
 ```{r check for corellation, include = FALSE}
 # chi squared test for each pair of pre-existing conditions
 attach(covid_complete_case)
@@ -323,13 +338,17 @@ for (conditionx in conditions) {
 # plot the matrix
 ggcorrplot(conditions_matrix, type="upper") + scale_fill_gradient2(limit=c(0,0.4), low='white', high='red') + ggtitle("Corellation Matrix") + theme(plot.title=element_text(hjust=0.5,size=15)) + labs(fill="Cramer's V")
 ```
-
+\
 The above correlogram shows correlations between the categorical predictor variables. A value greater than 0.5 typically represents collinearity; as all values fall below that threshold, we can assume independence. 
 \
-#### Takeaways from Data Exploration\
+\
+
+##### **Takeaways from Data Exploration**
 During data exploration we learned that there was a relatively low proportion of missing datapoints within our predictor variables. Additionally, our predictors are independent of each other, and that there appeared to be a visual correlation between our predictors and the target variable. 
 \
-#### Data Imputation\
+\
+
+##### **Data Imputation**
 Data exploration showed that there were patients' of age 0 up to 120. As 120 years old could be an error in imputation or an outlier, to reduce error we used 3 standard deviations to replace the upper age range. Any age above 95 years old was replaced with 95. Age of 0 was left as it is, as there could be patients newborn or under the age of 1 years old. 
 \
 ```{r, impute age outliers}
@@ -338,14 +357,19 @@ sd_age <- sd(covid_complete_case$age)
 imputed_age <- round(mean_age + 3*sd_age)
 covid_complete_case$age[covid_complete_case$age > imputed_age] = imputed_age
 ```
-
-### Modeling and Evaluation\
-We have understood, cleaned and organized our data. We are not ready to create our prediction model. We have decided to create 4 models, evaluate them and then chose the model with the highest accuracy.
 \
-#### Feature Selection\
-The data started with 23 columns. We have added the death column, which was obtained by the date_died column, as explained above. The death column will be used as our target variable. We excluded the icu, intubed and contact_other columns in our models as they are not medical preconditions. We chose 14 features in total to be used in our analysis, 12 which are the preconditions and 2 which are the patient's sex and age. We decided to keep sex as a factor in our analysis, as data exploration showed that difference in sex was significant in covid death rates. The 12 precondition features chosen were: pneumonia, pregnancy, diabetes, copd, asthma, inmsupr (immunosupressed), hypertension, other_disease, cardiovascular, obesity, renal_chronic and tobacco. Age was the other feature chosen and it was used as a separate numerical feature.\
 
-##### Cross Validation\
+#### **Modeling and Evaluation**
+We have understood, cleaned and organized our data. We are now ready to create our prediction model. We have decided to create 4 models, evaluate them and then chose the model with the highest accuracy without making sacrifices to sensitivity or specificity.
+\
+\
+
+##### **Feature Selection**
+The data started with 23 columns. We have added the death column, which was obtained by the date_died column, as explained above. The death column will be used as our target variable. We excluded the icu, intubed and contact_other columns in our models as they are not medical preconditions. We chose 14 features in total to be used in our analysis, 12 which are the preconditions and 2 which are the patient's sex and age. We decided to keep sex as a factor in our analysis, as data exploration showed that difference in sex was significant in covid death rates. The 12 precondition features chosen were: pneumonia, pregnancy, diabetes, copd, asthma, inmsupr (immunosupressed), hypertension, other_disease, cardiovascular, obesity, renal_chronic and tobacco. Age was the other feature chosen and it was used as a separate numerical feature.
+\
+\
+
+##### **Cross Validation**
 The data was split into k = 10 folds. During each training iteration, one of the k subsets was used as the test and the other k-1 subsets were used as the training set.  This method was used over the simple train-test-split as it gives a more valid estimation of model effectiveness.
 \
 ```{r Select the data, include=FALSE}
@@ -355,29 +379,31 @@ covid_complete_case_modeling <- covid_complete_case %>% select(2,8:20,24)
 factor_columns <- c('sex','pneumonia', 'pregnancy', 'diabetes', 'copd', 'asthma', 'inmsupr', 'hypertension', 'other_disease', 'cardiovascular', 'obesity', 'renal_chronic', 'tobacco', 'deathyn')
 covid_complete_case_modeling[factor_columns] <- lapply(covid_complete_case[factor_columns], factor)
 ```
+\
 
-#### Logistic Regression Model\
+##### **Logistic Regression Model**
+\
 ```{r Logisitc Regression Model, echo=FALSE}
 logistic_model <- readRDS('regression_model.rds')
 
 logistic_model$finalModel$coefficients
 confusionMatrix(logistic_model)
 ```
+\
 
-
-#### Decision Tree Model
-
+##### **Decision Tree Model**
 The decision tree model was chosen as one of the classification models as it is fast, accurate and can handle a large amount of data. It is also easily interpreted visually and does not take a lot of data preparation. 
 The decision tree model yielded a 89.03 % total accuracy. The model had a specificity of 91.08 % and a sensitivity of 58.77 %. The model very is very accurate at predicting non-death, but it's not accurate at predicting death. This is more likely due to the data being unbalanced, as most of the data had non-death. For this reason, the model was not chosen to make the application for this project. 
-
-
+\
 ```{r Decision Tree Model, echo=FALSE}
 decision_tree_model <- readRDS("decision_tree.rds")
 
 decision_tree_model$finalModel$variable.importance
 confusionMatrix(decision_tree_model)
 ```
-#### Random Forest Model\
+\
+
+##### **Random Forest Model**
 Random Forest is an ‘ensemble’ model that fits based on majority voting from numerous decision trees which corrects for overfitting. As Random Forest is a non-parametric algorithm, it requires little data preparation beforehand. Variables can be ranked according to importance based on Gini index, though how a variable affects final output is less interpretable than logistic regression. 
 The first iteration of training the Random Forest Classifier yielded 88.3% overall Accuracy, but a low Sensitivity of 27.96%, meaning it could correctly predict fewer than one-third of the cases where death occurred. We hypothesized that the low sensitivity might be due to an imbalance within the dataset (deaths occurred in <5% of all cases), and that undersampling the majority class (no death) or oversampling the minority class (death) might increase accuracy.
 Using the caret package, the Random Forest model was trained additionally using the following sampling techniques: down (simple random undersampling an equivalent number of cases where patients did not die), ROSE (Random Over-Sampling Examples), and SMOTE (Synthetic Minority Oversampling Technique). The results are shown below:
@@ -395,9 +421,9 @@ random_forest_model <- readRDS("RF_Crossvalidation_k10_rose.rds")
 random_forest_model$finalModel$importance
 random_forest_model$finalModel$confusion[,0:2]
 ```
+\
 
-#### Gradient Boosting\
-
+##### **Gradient Boosting**
 Gradient boosting is a method of converting weak learners into strong learners. The model begins by training a decision tree with equal weight, and then we will increase the weights of those observations that are difficult to classify and lower the weights for easy ones to create a new tree. Our model is therefore combination of tree 1 and tree 2. Gradient boosting identifies the shortcomings by using gradients in the loss function (y=ax+b+e, e needs a special mention as it is the error term). The loss function is a measure indication how good are model’s coefficients are at fitting the underlying data. 
 We used the package “gbm” to train the gbm model and used cross-validation method to determine the best iteration. There are several ways we can choose for distribution of our response variable, for example-“bernoulli” (logistic regression for 0-1 outcome), “gaussian”(squared errors), “tdist” (t-distribution loss), we used bernoulli for our gbm model.  The overall accuracy for this model is 88.67%. 
 
@@ -407,10 +433,9 @@ gbm_model <- readRDS("gbm_model.rds")
 #caret::varImp(gbm_model)
 confusionMatrix(gbm_model)
 ```
-
-
-#### Model Selection\
 \
+
+##### **Model Selection**
 We created four different models for our project available and we selected the best one for deployment.
 As you can observe from the table, the random forest model has the best performance, as its accuracy is 91.4% which is high. Also, it has the highest F1 score. The other three models have good performance as well, but all have some limitations, as described in each model above. However, unfortunately we can’t use the random forest model for deployment due to the size of the model, as the calculation will take too long if we use it. Therefore, we chose the second best model, the logistic regression model, for deployment. The logistic regression model has an 88.7% accuracy and 91.2% specificity, which is a good choice for deployment.
 
@@ -443,20 +468,22 @@ model_performance_output <- model_performance %>% select(1,7:13)
 
 kable(model_performance_output, format = 'pipe')
 ```
+\
 
-
-#### Deployment\
+##### **Deployment**
 We created an application that used one of our machine-learning models with R Shiny. The user can choose from a checklist of pre-set parameters based on the model's predictor variables (e.g. Age, Sex, various preconditions) in the UI, in which the server will then output a probability of death. The application then compares the predicted probability with the distribution of all cases predicted by the model and returns a risk score (low, middle, high) based on how the predicted probability compared to the entire dataset predicted by the model.  
 
 While the Random Forest model with ROSE sampling was the most accurate, it was too large to be deployed with the Shinyapps.io cloud. Thus, the logistic regression equation, with its high interpretability and low memory usage, was chosen for the application back-end instead. The application can be found here [ https://sean-z.shinyapps.io/covid_analysis/]( https://sean-z.shinyapps.io/covid_analysis/).   
+\
 
-### Conclusion\
+#### **Conclusion**
 In this project we used supervised machine learning to create an application that predicts probability of death from Covid-19 based on age and pre-existing medical conditions. The dataset was obtained from the Mexican government. The data was cleaned and a total of 13 features were included in the models. Twelve features were medical preconditions as binary data. The last feature was age as a categorical data. Four different machine learning models were created: decision tree model, logistic regression model, random forest model and gradient boosting model. The were evaluated based on accuracy from which the random forest model was the one with the highest accuracy. However, due to the large size of the random forest model, the logistic regresion model was selected for building our application. Our application is displayed on shiny app. It can be used by medical professionals as a guidance in decision making for hospitalization of patients and use of medical resources during the Covid-19 pandemic. It can also be used by people tested positive with Covid-19 as a guide on whether to seek hospitalization. The application is not to replace experpert advice or governmental recommendations. \
 There are limitations to be considered for this project. First of all, the dataset was obtained from the Mexican government and it only contains Mexican population. This means that the data does not represent the whole world population diversity. Furthermore, the data is from the first wave of the virus. Viruses are known to change or mutate, so the data might not reflect all types of Covid-19 strains. A few different strains are known of Covid-19, thus this data might not reflect all of them, especially the ones that have been from a recent mutation. In addition, the preconditions severity is unknown. Depending on how severe a condition is, it can affect death probability. This application is build on the assumptions that all precondtions are in equal severity. Also, the Covid-19 test is not 100% accurate. Our model does not account for the accuracy of the Covid-19 test, which could affect the prediction results. Finally, we do not know whether it is a Covid-19 related death. As many patients had other preconditions, it is not for certain known that each of them died from Covid-19.\
 Overall, we were able to build an accurate model that predicts the probability of death based on preconditions for confirmed-positive Covid-19 patients. However, our model does have limitations, as it was built mainly to demonstrate a proof-of-concept. Further tuning would be necessary to improve model accuracy and stakeholder decision-making.
 \
-### Bibliography\
-\   
+\
+
+##### **Bibliography**
 Certain Medical Conditions and Risk for Severe COVID-19 Illness. (n.d.). Retrieved October 13, 2020, from https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html/
 Coronavirus Cases:. (n.d.). Retrieved October 13, 2020, from https://www.worldometers.info/coronavirus/?utm_campaign=homeAdvegas1%3F
 Li, H., Liu, S. M., Yu, X. H., Tang, S. L., & Tang, C. K. (2020). Coronavirus disease 2019 (COVID-19): current 
