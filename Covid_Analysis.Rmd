@@ -375,16 +375,12 @@ The data started with 23 columns. We have added the death column, which was obta
 ##### Cross Validation\
 The data was split into k = 10 folds. During each training iteration, one of the k subsets was used as the test and the other k-1 subsets were used as the training set.  This method was used over the simple train-test-split as it gives a more valid estimation of model effectiveness.
 \
-```{r Select the data and split into train and test, include=FALSE}
+```{r Select the data, include=FALSE}
 # select the columns needed for modeling
 covid_complete_case_modeling <- covid_complete_case %>% select(2,8:20,24)
 # convert the categorical variables to factors
 factor_columns <- c('sex','pneumonia', 'pregnancy', 'diabetes', 'copd', 'asthma', 'inmsupr', 'hypertension', 'other_disease', 'cardiovascular', 'obesity', 'renal_chronic', 'tobacco', 'deathyn')
 covid_complete_case_modeling[factor_columns] <- lapply(covid_complete_case[factor_columns], factor)
-sample_size <- round(0.75*nrow(covid_complete_case_modeling))
-train_index <- sample(seq_len(nrow(covid_complete_case_modeling)), size = sample_size)
-train_data <- covid_complete_case_modeling[train_index, ]
-test_data <- covid_complete_case_modeling[-train_index, ]
 ```
 
 #### Logistic Regression Model\
@@ -395,13 +391,12 @@ logistic_model$finalModel$coefficients
 confusionMatrix(logistic_model)
 ```
 
-<<<<<<< HEAD
+
 #### Decision Tree Model
-=======
 
 The decision tree model was chosen as one of the classification models as it is fast, accurate and can handle a large amount of data. It is also easily interpreted visually and does not take a lot of data preparation. 
 The decision tree model yielded a 89.03 % total accuracy. The model had a specificity of 91.08 % and a sensitivity of 58.77 %. The model very is very accurate at predicting non-death, but it's not accurate at predicting death. This is more likely due to the data being unbalanced, as most of the data had non-death. For this reason, the model was not chosen to make the application for this project. 
->>>>>>> 19eda045284a14b7edc88235ca3a4b005b07e080
+
 
 ```{r Decision Tree Model, echo=FALSE}
 decision_tree_model <- readRDS("decision_tree.rds")
