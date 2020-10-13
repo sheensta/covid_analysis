@@ -488,7 +488,7 @@ There are limitations to be considered for this project. First of all, the datas
 Overall, we were able to build a highly accurate model that predicts the probability of death due to Covid-19. However, our model does have limitations. It is suggested that the app is used as a guide, as it does not replace medical advice or government recommendations. 
 \
 ### Bibliography\
-\
+\ 
 Certain Medical Conditions and Risk for Severe COVID-19 Illness. (n.d.). Retrieved October 13, 2020, from https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html/
 Coronavirus Cases:. (n.d.). Retrieved October 13, 2020, from https://www.worldometers.info/coronavirus/?utm_campaign=homeAdvegas1%3F
 Li, H., Liu, S. M., Yu, X. H., Tang, S. L., & Tang, C. K. (2020). Coronavirus disease 2019 (COVID-19): current 
