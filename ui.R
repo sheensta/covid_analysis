@@ -75,16 +75,21 @@ ui <- fluidPage(
                 tags$li(tags$span('Gradient Boost'))
             )),
             tags$line(
-                'The Random Forest model cross validated with k = 10 folds and ROSE sampling had the highest overall accuracy and balanced accuracy (91% for both). However, due to its large size, it could not be deployed successfully to the shinyapps.io cloud. Ultimately, we chose to deploy with Logistic Regression for its interpretability and low memory usage.'
+                'The Random Forest model cross validated with k = 10 folds and ROSE sampling had the highest overall accuracy and balanced accuracy (91% for both). However, due to its large size, it could not be deployed successfully to the shinyapps.io cloud. Ultimately, we chose to deploy with Logistic Regression for its interpretability and low memory usage. Below is the generalized equation showing the log-odds:'
             ),
+            tags$line(
+                withMathJax("$$\\text{ℓ}=β_{0}+β_{1}x_{1}+β_{2}x_{2} + ... + β_{n}x_{n}$$")
+            ),
+            tags$line('where ℓ represents the log-odds and β represents the parameters of the model (i.e. age, sex, and preconditions). Probability is then calculated by the following:'),
+            tags$line(withMathJax(('$$\\rho = \\frac{e^ℓ}{1+e^ℓ}$$'))),
             h3('Model Validations:'),
             tags$line(
-                'The logistic regression model has an overall accuracy of 88.7%, specificity (true negative rate) of 91.2%, and sensitivity (true positive rate) of 56.3%. While the model is fairly accurate overall, it tends to underpredict cases where death occurred. Thus, this application is only meant to showcase ML-application as a proof-of-concept and should not be used to aid clinical decision-making
+                'The logistic regression model has an overall accuracy of 88.7%, specificity (true negative rate) of 91.2%, and sensitivity (true positive rate) of 56.3%. While the model is fairly accurate overall, it tends to underpredict cases where death occurred. Thus, this application is only meant to showcase the ML model as a proof-of-concept and should not be used to aid clinical decision-making
 .'
-            ),
-            tags$line(withMathJax("$$\\text{Logistic Regression }X_n=X_{n-1}-\\varepsilon$$"))
+            )
+            
         ),
-        tabPanel('About the Authors',)
+        tabPanel('About the Authors', )
     )
     
 )
