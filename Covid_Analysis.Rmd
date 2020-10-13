@@ -404,6 +404,7 @@ The decision tree model was chosen as one of the classification models as it is 
 =======
 #### Decision Tree Model\
 >>>>>>> 19eda045284a14b7edc88235ca3a4b005b07e080
+
 ```{r Decision Tree Model, echo=FALSE}
 decision_tree_model <- readRDS("decision_tree.rds")
 
@@ -416,12 +417,7 @@ The first iteration of training the Random Forest Classifier yielded 88.3% overa
 Using the caret package, the Random Forest model was trained additionally using the following sampling techniques: down (simple random undersampling an equivalent number of cases where patients did not die), ROSE (Random Over-Sampling Examples), and SMOTE (Synthetic Minority Oversampling Technique). The results are shown below:
 
 ```{r Make Table}
-
-#	original	down	ROSE	SMOTE
-#Accuracy	88.29%	81.10%	91.39%	84.06%
-#Specificity	96.70%	79.16%	90.33%	84.99%
-#Sensitivity	27.96%	83.05%	92.45%	82.82%
-#Bal. Accuracy	62.44%	81.11%	91.39%	83.90%
+kable(data.frame('model' = c('original','down','ROSE','SMOTE'), 'Accuracy'=c('88.29%','81.10%','91.39%','84.06%'), 'Specificity' = c('96.70%','79.16%','90.33%','84.99%'), 'Sensitivity'=c('27.96%', '83.05%','92.45%','82.82%'), 'Balanced Accuracy'=c('62.44%','81.11%','91.39%','83.90%')))
 ```
 
 The different sampling methods to balance the data all resulted in an increase in sensitivity as hoped, though overall accuracy fell for down-sampling and SMOTE due to a decrease in detecting true negative cases. However, the ROSE method was chosen as the final model, as it greatly increased sensitivity while preserving specificity, thus leading to a higher overall accuracy and much higher balanced accuracy.
