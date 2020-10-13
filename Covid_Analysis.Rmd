@@ -370,10 +370,10 @@ covid_complete_case$age[covid_complete_case$age > imputed_age] = imputed_age
 We have understood, cleaned and organized our data. We are not ready to create our prediction model. We have decided to create 4 models, evaluate them and then chose the model with the highest accuracy.
 \
 #### Feature Selection\
-The data started with 23 columns. We have added the death column, which was obtained by the date_died column, as explained above. The death column will be used as our target variable. We decided not to include a few features in our models, as they do not meet our independent variable criteria. We excluded the icu, intubed and contact_other columns in our models as they are not a medical precondition. We chose 13 features in total to be used in our analysis, 12 which are the preconditions and 1 which is the patient's sex. We decided to keep sex as a factor in our analysis, as data exploration showed that difference in sex was significant in covid death rates. The 12 precondition features chosen were: pneumonia, pregnancy, diabetes, copd, asthma, inmsupr (immunosupressed), hypertension, other_disease, cardiovascular, obesity, renal_chronic and tobacco. Sex was the other feature chosen and it was used as a separate numerical feature.\
+The data started with 23 columns. We have added the death column, which was obtained by the date_died column, as explained above. The death column will be used as our target variable. We excluded the icu, intubed and contact_other columns in our models as they are not medical preconditions. We chose 14 features in total to be used in our analysis, 12 which are the preconditions and 2 which are the patient's sex and age. We decided to keep sex as a factor in our analysis, as data exploration showed that difference in sex was significant in covid death rates. The 12 precondition features chosen were: pneumonia, pregnancy, diabetes, copd, asthma, inmsupr (immunosupressed), hypertension, other_disease, cardiovascular, obesity, renal_chronic and tobacco. Age was the other feature chosen and it was used as a separate numerical feature.\
 
-##### Train and Test Data\
-The data was split into train and test sets to be used for our model. Train data contained 75 % of our data, while test data contained 25% of our data. 
+##### Cross Validation\
+The data was split into k = 10 folds. During each training iteration, one of the k subsets was used as the test and the other k-1 subsets were used as the training set.  This method was used over the simple train-test-split as it gives a more valid estimation of model effectiveness.
 \
 ```{r Select the data and split into train and test, include=FALSE}
 # select the columns needed for modeling
@@ -410,8 +410,23 @@ decision_tree_model <- readRDS("decision_tree.rds")
 decision_tree_model$finalModel$variable.importance
 confusionMatrix(decision_tree_model)
 ```
-
 #### Random Forest Model\
+Random Forest is an ‘ensemble’ model that fits based on majority voting from numerous decision trees which corrects for overfitting. As Random Forest is a non-parametric algorithm, it requires little data preparation beforehand. Variables can be ranked according to importance based on Gini index, though how a variable affects final output is less interpretable than logistic regression. 
+The first iteration of training the Random Forest Classifier yielded 88.3% overall Accuracy, but a low Sensitivity of 27.96%, meaning it could correctly predict fewer than one-third of the cases where death occurred. We hypothesized that the low sensitivity might be due to an imbalance within the dataset (deaths occurred in <5% of all cases), and that undersampling the majority class (no death) or oversampling the minority class (death) might increase accuracy.
+Using the caret package, the Random Forest model was trained additionally using the following sampling techniques: down (simple random undersampling an equivalent number of cases where patients did not die), ROSE (Random Over-Sampling Examples), and SMOTE (Synthetic Minority Oversampling Technique). The results are shown below:
+
+```{r Make Table}
+
+#	original	down	ROSE	SMOTE
+#Accuracy	88.29%	81.10%	91.39%	84.06%
+#Specificity	96.70%	79.16%	90.33%	84.99%
+#Sensitivity	27.96%	83.05%	92.45%	82.82%
+#Bal. Accuracy	62.44%	81.11%	91.39%	83.90%
+```
+
+The different sampling methods to balance the data all resulted in an increase in sensitivity as hoped, though overall accuracy fell for down-sampling and SMOTE due to a decrease in detecting true negative cases. However, the ROSE method was chosen as the final model, as it greatly increased sensitivity while preserving specificity, thus leading to a higher overall accuracy and much higher balanced accuracy.
+
+
 ```{r Random Forest Model, echo=FALSE}
 random_forest_model <- readRDS("RF_Crossvalidation_k10_rose.rds")
 
@@ -420,6 +435,10 @@ random_forest_model$finalModel$confusion[,0:2]
 ```
 
 #### Gradient Boosting\
+
+Gradient boosting is a method of converting weak learner into strong learners. The model begins by training a decision tree with equal weight, and then we will increase the weights of those observations that are difficult to classify and lower the weights for easy ones to create a new tree. Our model is therefore combination of tree 1 and tree 2. Gradient boosting identifies the shortcomings by using gradients in the loss function (y=ax+b+e, e needs a special mention as it is the error term). The loss function is a measure indication how good are model’s coefficients are at fitting the underlying data. 
+We used the package “gbm” to train the gbm model and used cross-validation method to determine the best iteration. There are several ways we can choose for distribution of our response variable, for example-“bernoulli” (logistic regression for 0-1 outcome), “gaussian”(squared errors), “tdist” (t-distribution loss), we used bernoulli for our gbm model.  The overall accuracy for this model is 88.67%. 
+
 ```{r Gradient Boosting Model, echo=FALSE}
 gbm_model <- readRDS("gbm_model.rds")
 
@@ -460,7 +479,10 @@ kable(model_performance_output, format = 'pipe')
 ```
 
 
-#### Deployment
+#### Deployment\
+We created an application that used one of our machine-learning models with R Shiny. The user can choose from a checklist of pre-set parameters based on the model's predictor variables (e.g. Age, Sex, various preconditions) in the UI, in which the server will then output a probability of death. The application then compares the predicted probability with the distribution of all cases predicted by the model and returns a risk score (low, middle, high) based on how the predicted probability compared to the entire dataset predicted by the model.  
+
+While the Random Forest model with ROSE sampling was the most accurate, it was too large to be deployed with the Shinyapps.io cloud. Thus, the logistic regression equation, with its high interpretability and low memory usage, was chosen for the application back-end instead. The application can be found here:   
 
 ### Conclusion\
 In this project we used supervised machine learning to create an application that predicts probability of death from Covid-19 based on age and pre-existing medical conditions. The dataset was obtained from the Mexican government. The data was cleaned and a total of 13 features were included in the models. Twelve features were medical preconditions as binary data. The last feature was age as a categorical data. Four different machine learning models were created: decision tree model, logistic regression model, random forest model and gradient boosting model. The were evaluated based on accuracy from which the rain forest model was the one with the highest accuracy. However, due to the ?? the logistic regresion model was selected for building our application. Our application is displayed on shiny app. It can be used by medical professionals as a guidance in decision making for hospitalization of patients and use of medical resources during the Covid-19 pandemic. It can also be used by people tested positive with Covid-19 as a guide on whether to seek hospitalization. The application is not to replace experpert advice or governmental recommendations.
