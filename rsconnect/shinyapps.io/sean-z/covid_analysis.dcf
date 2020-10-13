@@ -1,0 +1,13 @@
+name: covid_analysis
+title: covid_analysis
+username:
+account: sean-z
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2983748
+bundleId: 3736309
+url: https://sean-z.shinyapps.io/covid_analysis/
+when: 1602619108.2205
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData|.RDataTmp|~$ditional information regarding random forests.docx|Additional information regarding random forests.docx|covid.csv|Covid_Analysis.pdf|Covid_Analysis.Rmd|covid_models.r|decision_tree.rds|gbm_model.rds|lucy_app_main.R|missing data visualization.R|README.md|RF_Crossvalidation_k10_rose.rds|test.pdf|Test.Rmd|Covid_Analysis_files/figure-html/plot the matrix-1.png|Covid_Analysis_files/figure-html/prcondition graph grid-1.png|Covid_Analysis_files/figure-html/visualizing missing data-1.png|Covid_Analysis_files/figure-latex/plot the matrix-1.pdf|Covid_Analysis_files/figure-latex/prcondition graph grid-1.pdf

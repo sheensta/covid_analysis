@@ -1,6 +1,5 @@
 library(shiny)
 library(shinythemes)
-library(car)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -62,9 +61,9 @@ ui <- fluidPage(
             ),
             h3('Preprocessing:'),
             tags$line(
-                'The dataset was curated by Complete Case Analysis, in which an observation was removed if one or more of its predictor variables was missing, thus resulting in the removal of <1% of total observations. It was assumed that these data were Missing Completely At Random (MCAR).'
+                'The dataset was curated by Complete Case Analysis, in which an observation was removed if one or more of its predictor variables was missing, thus resulting in the removal of ~1% of total observations. It was assumed that these data were Missing Completely At Random (MCAR).'
             ),
-            h3('Model Selection'),
+            h3('Model Selection:'),
             tags$line(
                 'The following machine learning classifiers were trained on the data:'
             ),
@@ -82,14 +81,23 @@ ui <- fluidPage(
             ),
             tags$line('where ℓ represents the log-odds and β represents the parameters of the model (i.e. age, sex, and preconditions). Probability is then calculated by the following:'),
             tags$line(withMathJax(('$$\\rho = \\frac{e^ℓ}{1+e^ℓ}$$'))),
-            h3('Model Validations:'),
+            h3('Model Validation:'),
             tags$line(
-                'The logistic regression model has an overall accuracy of 88.7%, specificity (true negative rate) of 91.2%, and sensitivity (true positive rate) of 56.3%. While the model is fairly accurate overall, it tends to underpredict cases where death occurred. Thus, this application is only meant to showcase the ML model as a proof-of-concept and should not be used to aid clinical decision-making
+                'The logistic regression model has an overall accuracy of 88.7%, specificity (true negative rate) of 91.2%, and sensitivity (true positive rate) of 56.3%. While the model is fairly accurate in general, it tends to underpredict for cases where death occurred. As such, this application is only meant to showcase the ML model as a proof-of-concept and should not be used to aid clinical decision-making.
 .'
             )
             
         ),
-        tabPanel('About the Authors', )
+        tabPanel('About the Authors', 
+                 h3('Sean X. Zhang'),
+                 tags$line('Sean works as an Analyst specializing in health data privacy at a global analytics and consulting company. He completed his BSc. Neuroscience and MSc. Experimental Medicine (with a focus on Biomedical ethics) both at McGill University and is completing a Certificate in Machine Learning from York University. Coming from an interdisiplinary background of biomedical science, data science, and ethics, Sean aims to apply his diverse skillset to improve data-driven solutions within the healthcare sector.'),
+                 h3('Lucy Zhang'),
+                 tags$line('Lucy completed her degree in Software Engineering at McMaster University.'),
+                 h3('Colin Green'),
+                 tags$line('Colin Green holds a Bachelor of Science with a major in Physics and a minor in Business from the University of Ottawa and is currently a student a York University studying machine learning.  As an aspiring data scientist, he hopes to one day contribute to the solution of the climate crisis with the use of machine learning.'),
+                 h3('Albina Cako'),
+                 tags$line('Education: Bachelor of Science (Honors with Distinction) Ryerson University. Currently on my 4th year of Doctor of Naturopathic Medicine Degree at the Canadian College of Naturopathic Medicine. As well, doing a Certificate on Machine learning at York University and a Masters of Biomedical Engineering at Ryerson University focusing on Machine Learning. Interests: Machine learning in the medical field, as well as use of Machine learning in technological innovation, marketing, social media and business development.'),
+                 )
     )
     
 )
