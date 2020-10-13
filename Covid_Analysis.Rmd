@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ##### **Abstract**
-abstract goes here 
+This project focuses on building a machine learning model on predicting probability of death rate during the Covid-19 pandemic using supervised learning. Data obtained by the Mexican government was used. The data was visualized, cleaned and prepared for modeling. Prediction of the model uses the patients sex, age and 12 medical preconditions. Four different classification models were created: decision tree, random forest, logistic regression and gradient boosting models. The models were evaluated on their accuracy. The random forest model had the highest performance and accuracy, however, due to its large size, the logistic regression model was chosen for deployment. Deployment of the model was constructing using ShinyApp. An application was created that can be used on predicting probability of death based on age, sex and medical preconditions. The application can be used as a guide for medical professionals in decision making for resource distribution, as well as for patients who test positive with Covid-19 on whether to seek hospitalization. The app has it's limitations and it is advised to be used only as a guide, as it does not replace expert advice or government recommendations. 
 
 ##### **Background**\
 \
@@ -398,7 +398,7 @@ random_forest_model$finalModel$confusion[,0:2]
 
 #### Gradient Boosting\
 
-Gradient boosting is a method of converting weak learner into strong learners. The model begins by training a decision tree with equal weight, and then we will increase the weights of those observations that are difficult to classify and lower the weights for easy ones to create a new tree. Our model is therefore combination of tree 1 and tree 2. Gradient boosting identifies the shortcomings by using gradients in the loss function (y=ax+b+e, e needs a special mention as it is the error term). The loss function is a measure indication how good are model’s coefficients are at fitting the underlying data. 
+Gradient boosting is a method of converting weak learners into strong learners. The model begins by training a decision tree with equal weight, and then we will increase the weights of those observations that are difficult to classify and lower the weights for easy ones to create a new tree. Our model is therefore combination of tree 1 and tree 2. Gradient boosting identifies the shortcomings by using gradients in the loss function (y=ax+b+e, e needs a special mention as it is the error term). The loss function is a measure indication how good are model’s coefficients are at fitting the underlying data. 
 We used the package “gbm” to train the gbm model and used cross-validation method to determine the best iteration. There are several ways we can choose for distribution of our response variable, for example-“bernoulli” (logistic regression for 0-1 outcome), “gaussian”(squared errors), “tdist” (t-distribution loss), we used bernoulli for our gbm model.  The overall accuracy for this model is 88.67%. 
 
 ```{r Gradient Boosting Model, echo=FALSE}
@@ -410,6 +410,10 @@ confusionMatrix(gbm_model)
 
 
 #### Model Selection\
+\
+We created four different models for our project available and we selected the best one for deployment.
+As you can observe from the table, the random forest model has the best performance, as its accuracy is 91.4% which is high. Also, it has the highest F1 score. The other three models have good performance as well, but all have some limitations, as described in each model above. However, unfortunately we can’t use the random forest model for deployment due to the size of the model, as the calculation will take too long if we use it. Therefore, we chose the second best model, the logistic regression model, for deployment. The logistic regression model has an 88.7% accuracy and 91.2% specificity, which is a good choice for deployment.
+
 ```{r create dataframe of model performance, echo=FALSE}
 models <- c("logistic_regression","decision_tree","random_forest","gradient_boosting")
 model_performance <- data.frame(matrix(unlist(models), nrow=4, byrow=TRUE), stringsAsFactors = FALSE)
@@ -452,7 +456,7 @@ There are limitations to be considered for this project. First of all, the datas
 Overall, we were able to build an accurate model that predicts the probability of death based on preconditions for confirmed-positive Covid-19 patients. However, our model does have limitations, as it was built mainly to demonstrate a proof-of-concept. Further tuning would be necessary to improve model accuracy and stakeholder decision-making.
 \
 ### Bibliography\
-\ 
+\   
 Certain Medical Conditions and Risk for Severe COVID-19 Illness. (n.d.). Retrieved October 13, 2020, from https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-with-medical-conditions.html/
 Coronavirus Cases:. (n.d.). Retrieved October 13, 2020, from https://www.worldometers.info/coronavirus/?utm_campaign=homeAdvegas1%3F
 Li, H., Liu, S. M., Yu, X. H., Tang, S. L., & Tang, C. K. (2020). Coronavirus disease 2019 (COVID-19): current 
