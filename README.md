@@ -8,5 +8,5 @@ Assignment #1 - Classification with Supervised Learning
 * **Shiny** folder includes the source code and input required to run the shiny app.
 * **other_code** folder contains supplementary scripts that were not included in the final report.
 
-## Shiny App
-URL: [Predicting COVID-19 Mortality using Machine Learning](https://sean-z.shinyapps.io/covid_analysis/)
+## Shiny Application
+Link to Deployed Application: [Predicting COVID-19 Mortality using Machine Learning](https://sean-z.shinyapps.io/covid_analysis/)
